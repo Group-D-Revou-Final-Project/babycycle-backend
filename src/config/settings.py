@@ -21,10 +21,6 @@ seeder = FlaskSeeder()
 
 def create_app(settings_conf=None):
     """Application factory to create a Flask app instance."""
-    # template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'templates')
-    # static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
-
-    # app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
     app = Flask(__name__)
 
     # Swagger configuration for securityDefinitions
