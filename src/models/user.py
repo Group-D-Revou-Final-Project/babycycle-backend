@@ -1,9 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-# from email_validator import validate_email, EmailNotValidError
 from flask_login import UserMixin
-
-db = SQLAlchemy()
+from src.config.settings import db
+# from email_validator import validate_email, EmailNotValidError
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -21,7 +20,7 @@ class User(db.Model, UserMixin):
         """Initialize a new user instance."""
         
         # Validasi email sebelum menyimpannya
-        self.validate_email(email)
+        # self.validate_email(email)
 
         self.username = username
         self.email = email

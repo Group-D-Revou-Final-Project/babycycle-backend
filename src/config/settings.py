@@ -10,6 +10,7 @@ from flasgger import Swagger
 from flask_login import LoginManager
 
 
+
 # Load environment variables
 load_dotenv()
 
@@ -74,60 +75,26 @@ def create_app(settings_conf=None):
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'YourFallbackSecretKey')
 
     # app.config['DEBUG'] = True
-    # app.config['SECRET_KEY'] = "ThisIsASecretKey"
-
 
     # Initialize the app with extensions
     db.init_app(app)
     migrate.init_app(app, db)
     seeder.init_app(app, db)
 
-    # from src.router.Login import LoginView
-    # from src.router.Logout import LogoutView
-    # # from src.router.UserFetch import UserFetchView
-    # from src.router.User import UserView
-    # from src.router.Account import AccountView
-    # from src.router.Transaction import TransactionView
-    # # from src.router.Review import ReviewView
-    # # from src.router.TestQuery import TestQueryView
-    # from src.models.BankingModel import User
-    # from flask_login import LoginManager
+    # login_manager = LoginManager(app)
+    # # login_manager.login_view = "/"  # Set the login view endpoint name
 
-    login_manager = LoginManager(app)
-    # login_manager.login_view = "/"  # Set the login view endpoint name
+    # @login_manager.user_loader
+    # def load_user(user_id):
+    #     from src.model.user import User
+    #     return User.query.get(int(user_id))
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        from src.model.user import User
-        return User.query.get(int(user_id))
+    api_url='/api/v1'
+    from src.routers.auth import auth_bp
+    app.register_blueprint(auth_bp, name='authentication', url_prefix=api_url + '/auth')
 
 
-    # login_view = LoginView.as_view('login_view')
-    # app.add_url_rule('/auth/v1/login', view_func=login_view, methods=['GET','POST'])
-    # app.add_url_rule('/auth/v1/login/<int:user_id>', view_func=login_view, methods=['GET'])
 
-    # logout_view = LogoutView.as_view('logout_view')
-    # app.add_url_rule('/auth/v1/logout', view_func=logout_view, methods=['GET','POST'])
-    
-
-    # user_view = UserView.as_view('user_view')
-    # app.add_url_rule('/v1/user', view_func=user_view, methods=['POST'])
-    # app.add_url_rule('/v1/user/me', view_func=user_view, methods=['GET','PUT'])
-
-    # account_view = AccountView.as_view('account_view')
-    # app.add_url_rule('/v1/accounts', view_func=account_view, methods=['POST','GET'])
-    # app.add_url_rule('/v1/accounts/<int:account_id>', view_func=account_view, methods=['GET','PUT','DELETE'])
-    # # app.add_url_rule('/v1/account/me', view_func=account_view, methods=['GET'])
-
-    # transaction_view = TransactionView.as_view('transaction_view')
-    # app.add_url_rule('/v1/transactions', view_func=transaction_view, methods=['POST','GET'])
-    # app.add_url_rule('/v1/transactions/<int:transaction_id>', view_func=transaction_view, methods=['GET'])
-
-
-    
-
-    # test_query_view = TestQueryView.as_view('test_query_view')
-    # app.add_url_rule('/v2/getquery', view_func=test_query_view, methods=['GET'])
     
     @app.route('/')
     def hello_from_api():
