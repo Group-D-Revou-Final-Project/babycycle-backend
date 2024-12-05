@@ -7,6 +7,8 @@ from flask_seeder import FlaskSeeder
 import os
 from dotenv import load_dotenv
 from flasgger import Swagger
+from flask_login import LoginManager
+
 
 # Load environment variables
 load_dotenv()
@@ -64,8 +66,15 @@ def create_app(settings_conf=None):
     os.environ.setdefault("FLASK_SETTINGS_MODULE", "src.config.prod")
     conf = settings_conf or os.getenv("FLASK_SETTINGS_MODULE")
     app.config.from_object(conf)
-    app.config['DEBUG'] = True
-    app.config['SECRET_KEY'] = "ThisIsASecretKey"
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URI_PROD')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    app.config['DEBUG'] = os.getenv('DEBUG', 'True') == 'True'  # Convert from string to boolean
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'YourFallbackSecretKey')
+
+    # app.config['DEBUG'] = True
+    # app.config['SECRET_KEY'] = "ThisIsASecretKey"
 
 
     # Initialize the app with extensions
@@ -89,6 +98,7 @@ def create_app(settings_conf=None):
 
     @login_manager.user_loader
     def load_user(user_id):
+        from src.model.user import User
         return User.query.get(int(user_id))
 
 
