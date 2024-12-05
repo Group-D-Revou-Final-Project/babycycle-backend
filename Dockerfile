@@ -8,10 +8,15 @@ ENV POETRY_HOME="/opt/poetry" \
     POETRY_NO_INTERACTION=1
 ENV PATH="$PATH:$POETRY_HOME/bin"
 
+ENV PATH="/app/.venv/bin:$PATH"
+
+
 FROM base AS build
 WORKDIR /app
 COPY pyproject.toml .
+# COPY pyproject.toml poetry.lock ./
 RUN poetry lock --no-update && poetry install --only=main
+# RUN poetry lock --no-update && poetry install 
 COPY . .
 
 # Runtime stage
