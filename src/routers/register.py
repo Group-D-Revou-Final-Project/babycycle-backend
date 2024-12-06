@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-from src.config.settings import db
 from src.services.user_service import (
     create_user_account,
     verify_user_account,
