@@ -1,11 +1,11 @@
 from flask import Blueprint, request
 from src.services.user_service import (
-    create_user_account,
-    verify_user_account,
-    resend_verification_code,
-    forgot_password,
+    create_user_account, 
+    verify_user_account, 
+    resend_verification_code, 
+    forgot_password, 
     reset_password
-)
+    )
 
 register_blueprint = Blueprint('users', __name__)
 
