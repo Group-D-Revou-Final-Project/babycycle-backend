@@ -37,10 +37,10 @@ def create_product_route():
 
         # Pass the data to the service function
         return create_product(
-            name=name, 
-            price=price, 
-            description=description, 
-            category=category, 
+            name=name,
+            price=price,
+            description=description,
+            category=category,
             is_warranty=is_warranty, 
             image_url=image_url
         )

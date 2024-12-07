@@ -11,6 +11,7 @@ class ProductModel(db.Model):
     category = db.Column(db.String(255), nullable=False)  # Product category
     is_warranty = db.Column(db.Boolean, nullable=False, default=False)  # Boolean for warranty
     image_url = db.Column(db.String(255), nullable=True)  # URL of the product image
+    stock = db.Column(db.Integer, nullable=False, default=0)  # Product stock
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))  # Creation time
     updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))  # Update time
 
@@ -20,3 +21,15 @@ class ProductModel(db.Model):
 
     def __repr__(self):
         return f'<Product(name={self.name}, price={self.price}, category={self.category})>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'price': self.price,
+            'description': self.description,
+            'category': self.category,
+            'is_warranty': self.is_warranty,
+            'image_url': self.image_url,
+            'stock': self.stock
+        }
