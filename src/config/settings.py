@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 from flasgger import Swagger
 # from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
 
 
 
@@ -67,6 +68,9 @@ def create_app(settings_conf=None):
     app.config['DEBUG'] = os.getenv('DEBUG', 'True') == 'True'  # Convert from string to boolean
     app.config['SECRET_KEY'] = os.getenv('KEY_SECRET')
 
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY') 
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600 
+
 
     # Initialize the app with extensions
     db.init_app(app)
@@ -88,5 +92,7 @@ def create_app(settings_conf=None):
     def create_all_db():
         db.create_all()
         return jsonify({'message': 'Database created successfully'})
+
+     jwt = JWTManager(app)
     
     return app

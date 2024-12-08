@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from src.services.user_service import (
     create_user_account, 
     verify_user_account, 
@@ -49,3 +49,14 @@ def reset_password_route(token):
     new_password = data.get('new_password')
 
     return reset_password(token, new_password)
+
+
+
+@register_blueprint.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+
+    return login_user(email=email, password=password)
