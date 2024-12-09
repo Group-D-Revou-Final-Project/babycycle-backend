@@ -100,6 +100,88 @@ CREATE_PRODUCT = {
     }
 }
 
+# UPDATE_PRODUCT = {
+#     'tags': ['Products'],
+#     'summary': 'Update a product',
+#     'description': 'Update an existing product by its ID.',
+#     'parameters': [
+#         {
+#             'name': 'product_id',
+#             'in': 'path',
+#             'required': True,
+#             'description': 'The ID of the product to update',
+#             'schema': {
+#                 'type': 'integer'
+#             }
+#         }
+#     ],
+#     'requestBody': {
+#         'required': True,
+#         'content': {
+#             'application/json': {
+#                 'schema': {
+#                     'type': 'object',
+#                     'properties': {
+#                         'name': {
+#                             'type': 'string',
+#                             'description': 'Name of the product'
+#                         },
+#                         'price': {
+#                             'type': 'number',
+#                             'format': 'float',
+#                             'description': 'Price of the product'
+#                         },
+#                         'description': {
+#                             'type': 'string',
+#                             'description': 'Optional description of the product',
+#                             'default': ''
+#                         },
+#                         'category': {
+#                             'type': 'string',
+#                             'description': 'Category of the product'
+#                         },
+#                         'stock': {
+#                             'type': 'integer',
+#                             'description': 'Stock count of the product',
+#                             'default': 0
+#                         },
+#                         'is_warranty': {
+#                             'type': 'boolean',
+#                             'description': 'Indicates if the product has a warranty',
+#                             'default': False
+#                         },
+#                         'image_url': {
+#                             'type': 'string',
+#                             'description': 'Optional URL of the product image',
+#                             'default': ''
+#                         }
+#                     },
+#                     'required': ['name', 'price', 'category']  # Explicitly define required fields
+#                 },
+#                 'example': {
+#                     'name': 'Updated Laptop',
+#                     'price': 950.00,
+#                     'description': 'A slightly older but still powerful laptop.',
+#                     'category': 'Electronics',
+#                     'stock': 10,
+#                     'is_warranty': True,
+#                     'image_url': 'http://example.com/updated-laptop.jpg'
+#                 }
+#             }
+#         }
+#     },
+#     'responses': {
+#         200: {
+#             'description': 'Product updated successfully',
+#         },
+#         400: {
+#             'description': 'Invalid input'
+#         },
+#         404: {
+#             'description': 'Product not found'
+#         }
+#     }
+# }
 UPDATE_PRODUCT = {
     'tags': ['Products'],
     'summary': 'Update a product',
@@ -113,19 +195,76 @@ UPDATE_PRODUCT = {
             'schema': {
                 'type': 'integer'
             }
+        },
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'The updated product details',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'name': {
+                        'type': 'string'
+                    },
+                    'price': {
+                        'type': 'number'
+                    },
+                    'category': {
+                        'type': 'string'
+                    },
+                    'descriptions': {
+                        'type': 'string'
+                    },
+                    'image_url': {
+                        'type': 'string'
+                    },
+                    'stock': {
+                        'type': 'integer'
+                    },
+                },
+                # 'required': ['account_number']
+            }
         }
     ],
     'requestBody': {
+        'required': True,
         'content': {
             'application/json': {
-                'example': {
-                    'name': 'Laptop',
-                    'price': 1100.00,
-                    'description': 'A powerful laptop with a discount',
-                    'category': 'Electronics',
-                    'stock': 4,
-                    'is_warranty': True,
-                    'image_url': 'http://example.com/laptop.jpg'
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'name': {
+                            'type': 'string',
+                            'example': 'Laptop'
+                        },
+                        'price': {
+                            'type': 'number',
+                            'format': 'float',
+                            'example': 1100.00
+                        },
+                        'description': {
+                            'type': 'string',
+                            'example': 'A powerful laptop with a discount'
+                        },
+                        'category': {
+                            'type': 'string',
+                            'example': 'Electronics'
+                        },
+                        'stock': {
+                            'type': 'integer',
+                            'example': 4
+                        },
+                        'is_warranty': {
+                            'type': 'boolean',
+                            'example': True
+                        },
+                        'image_url': {
+                            'type': 'string',
+                            'example': 'http://example.com/laptop.jpg'
+                        }
+                    },
+                    'required': ['name', 'price', 'category']  # Required fields
                 }
             }
         }
@@ -142,6 +281,7 @@ UPDATE_PRODUCT = {
         }
     }
 }
+
 
 DELETE_PRODUCT = {
     'tags': ['Products'],

@@ -7,7 +7,7 @@ class ProductModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # Primary key
     name = db.Column(db.String(255), nullable=False)  # Product name
     price = db.Column(db.Float, nullable=False)  # Product price
-    description = db.Column(db.Text, nullable=True)  # Optional description
+    descriptions = db.Column(db.Text, nullable=True)  # Optional description
     category = db.Column(db.String(255), nullable=False)  # Product category
     is_warranty = db.Column(db.Boolean, nullable=False, default=False)  # Boolean for warranty
     image_url = db.Column(db.String(255), nullable=True)  # URL of the product image
@@ -29,7 +29,7 @@ class ProductModel(db.Model):
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'description': self.description,
+            'descriptions': self.descriptions,
             'category': self.category,
             'is_warranty': self.is_warranty,
             'image_url': self.image_url,

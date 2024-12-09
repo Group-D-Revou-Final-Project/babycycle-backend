@@ -25,6 +25,7 @@ def get_product_by_id(product_id):
     else:
         return jsonify({"error": "Product not found"}), 404
     
+
 def create_product(name, price, description, category, is_warranty, image_url, stock):
     try:
         # Create a new ProductModel instance
@@ -48,13 +49,13 @@ def create_product(name, price, description, category, is_warranty, image_url, s
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-def update_product(product_id, name, price, description, category, is_warranty, image_url, stock):
+def update_product(product_id, name, price, descriptions, category, is_warranty, image_url, stock):
     product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
     if product:
         try:
             product.name = name
             product.price = price
-            product.description = description
+            product.descriptions = descriptions
             product.category = category
             product.is_warranty = is_warranty
             product.image_url = image_url

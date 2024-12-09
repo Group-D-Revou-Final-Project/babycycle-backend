@@ -73,7 +73,7 @@ def update_product_route(product_id):
         # Extract fields
         name = data.get('name')
         price = data.get('price')
-        description = data.get('description', '')  # Optional field, defaults to an empty string
+        descriptions = data.get('descriptions', '')  # Optional field, defaults to an empty string
         category = data.get('category')
         stock = data.get('stock', 0)
         is_warranty = data.get('is_warranty', False)  # Optional field, defaults to False
@@ -88,7 +88,7 @@ def update_product_route(product_id):
             product_id=product_id,
             name=name,
             price=price,
-            description=description,
+            descriptions=descriptions,
             category=category,
             is_warranty=is_warranty, 
             image_url=image_url,
