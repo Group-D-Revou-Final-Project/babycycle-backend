@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flasgger import swag_from
 
 from src.services.products_service import (
     deactivate_product,
@@ -9,18 +10,29 @@ from src.services.products_service import (
     update_product
 )
 
+from src.swagger.products_swagger import (
+    GET_ALL_PRODUCTS,
+    GET_PRODUCT_BY_ID,
+    CREATE_PRODUCT,
+    UPDATE_PRODUCT,
+    DELETE_PRODUCT,
+    DEACTIVATE_PRODUCT
+)
+
 products_bp = Blueprint('products', __name__)
 
 @products_bp.route('/products', methods=['GET'])
+@swag_from(GET_ALL_PRODUCTS)
 def get_all_products_route():
     return get_all_products()
 
 @products_bp.route('/products/<int:product_id>', methods=['GET'])
+@swag_from(GET_PRODUCT_BY_ID)
 def get_product_by_id_route(product_id):
     return get_product_by_id(product_id)
 
-
 @products_bp.route('/products', methods=['POST'])
+@swag_from(CREATE_PRODUCT)
 def create_product_route():    
     try:
         # Get data from the request
@@ -52,6 +64,7 @@ def create_product_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 @products_bp.route('/products/<int:product_id>', methods=['PUT'])
+@swag_from(UPDATE_PRODUCT)
 def update_product_route(product_id):
     try:
         # Get data from the request
@@ -86,9 +99,11 @@ def update_product_route(product_id):
 
 
 @products_bp.route('/products/<int:product_id>', methods=['DELETE'])
+@swag_from(DELETE_PRODUCT)
 def delete_product_route(product_id):
     return delete_product(product_id)
 
 @products_bp.route('/products/<int:product_id>/deactivate', methods=['PUT'])
+@swag_from(DEACTIVATE_PRODUCT)
 def deactivate_product_route(product_id):
     return deactivate_product(product_id)
