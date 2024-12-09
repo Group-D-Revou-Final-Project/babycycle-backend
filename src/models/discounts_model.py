@@ -12,7 +12,7 @@ class DiscountModel(db.Model):
     end_date = db.Column(db.DateTime, nullable=True)  # Optional: Discount end date
     is_active = db.Column(db.Boolean, default=True)  # Whether the discount is active or not
 
-    product = db.relationship('ProductModel', backref='discounts', lazy=True)  # Backref for reverse relation
+    product = db.relationship('ProductModel', back_populates='discounts')  # Backref for reverse relation
 
     def __repr__(self):
         return f"<Discount(product_id={self.product_id}, discount_percentage={self.discount_percentage}, active={self.active})>"
