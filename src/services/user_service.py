@@ -4,8 +4,10 @@ from datetime import datetime, timezone
 from src.services.validator import Validator
 from src.models.users_model import UserModel
 from src.models.verifications_model import VerificationModel
-from werkzeug.security import generate_password_hash
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
+# import random
+# import string
 import os
 from dotenv import load_dotenv
 
@@ -176,3 +178,33 @@ def reset_password(token, new_password):
         return jsonify({"error": "The reset link has expired."}), 400
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+    
+
+def login_user(email, password):
+    
+    user = UserModel.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 404
+
+    
+    if not check_password_hash(user.password_hash, password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    
+    if not user.is_verified:
+        return jsonify({"error": "Email is not verified. Please verify your email first."}), 403
+
+    additional_claims = {
+        'id': user.id,
+        'role': user.role,  
+        'is_seller': user.is_seller  
+    }
+
+    
+    access_token = create_access_token(identity=user.id, additional_claims=additional_claims)
+
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token
+    }), 200
