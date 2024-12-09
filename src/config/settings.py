@@ -10,6 +10,7 @@ from flasgger import Swagger
 # from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 
+from flask_cors import CORS
 
 
 # Load environment variables
@@ -24,6 +25,9 @@ def create_app(settings_conf=None):
     """Application factory to create a Flask app instance."""
     app = Flask(__name__)
 
+    # Enable CORS
+    # CORS configuration allowing only specific domain
+    CORS(app, origins=["https://api.babycycle.my.id","http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000"], supports_credentials=True)
     # Swagger configuration for securityDefinitions
     swagger_config = {
         "swagger": "2.0",
