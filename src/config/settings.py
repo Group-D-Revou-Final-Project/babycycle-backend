@@ -79,7 +79,7 @@ def create_app(settings_conf=None):
     from src.routers.products import products_bp
 
     app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
-    app.register_blueprint(products_bp, url_prefix=api_url + '/products')
+    app.register_blueprint(products_bp, url_prefix=api_url)
     
     # http://127.0.0.1:5000/api/v1/users/register
     

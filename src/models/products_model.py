@@ -12,6 +12,8 @@ class ProductModel(db.Model):
     is_warranty = db.Column(db.Boolean, nullable=False, default=False)  # Boolean for warranty
     image_url = db.Column(db.String(255), nullable=True)  # URL of the product image
     stock = db.Column(db.Integer, nullable=False, default=0)  # Product stock
+    is_deactivated = db.Column(db.Boolean, nullable=False, default=False)
+    is_deleted = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))  # Creation time
     updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))  # Update time
 

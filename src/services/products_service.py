@@ -7,7 +7,7 @@ from src.config.settings import db
 
 def get_all_products():
     # Query all products
-    products = ProductModel.query.all()
+    products = ProductModel.query.filter_by(is_deleted=False).all()
     
     # Count the total number of products
     total_count = ProductModel.query.count()
@@ -19,13 +19,13 @@ def get_all_products():
     }), 200
 
 def get_product_by_id(product_id):
-    product = ProductModel.query.get(product_id)
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
     if product:
         return jsonify(product.to_dict()), 200
     else:
         return jsonify({"error": "Product not found"}), 404
     
-def create_product(name, price, description, category, is_warranty, image_url):
+def create_product(name, price, description, category, is_warranty, image_url, stock):
     try:
         # Create a new ProductModel instance
         new_product = ProductModel(
@@ -34,7 +34,8 @@ def create_product(name, price, description, category, is_warranty, image_url):
             description=description,
             category=category,
             is_warranty=is_warranty,
-            image_url=image_url
+            image_url=image_url,
+            stock=stock
         )
         
         # Add to database
@@ -46,3 +47,48 @@ def create_product(name, price, description, category, is_warranty, image_url):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+def update_product(product_id, name, price, description, category, is_warranty, image_url, stock):
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
+    if product:
+        try:
+            product.name = name
+            product.price = price
+            product.description = description
+            product.category = category
+            product.is_warranty = is_warranty
+            product.image_url = image_url
+            product.stock = stock
+            db.session.commit()
+            return jsonify(product.to_dict()), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Product not found"}), 404
+    
+def delete_product(product_id):
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
+    if product:
+        try:
+            product.is_deleted = True
+            db.session.commit()
+            return jsonify({"message": "Product deleted successfully"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Product not found"}), 404
+    
+def deactivate_product(product_id):
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
+    if product:
+        try:
+            product.is_deactivated = True
+            db.session.commit()
+            return jsonify({"message": "Product deactivated successfully"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Product not found"}), 404
