@@ -4,9 +4,8 @@ from datetime import datetime, timezone
 from src.services.validator import Validator
 from src.models.users_model import UserModel
 from src.models.verifications_model import VerificationModel
-from werkzeug.security import generate_password_hash, check_password_hash
-# import random
-# import string
+from werkzeug.security import generate_password_hash
+
 import os
 from dotenv import load_dotenv
 

@@ -16,6 +16,8 @@ class UserModel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     verification = db.relationship('VerificationModel', back_populates='user', uselist=False, cascade="all, delete-orphan")
+    # Define relationship to ProductModel
+    products = db.relationship('ProductModel', back_populates='user', cascade="all, delete-orphan")  # One-to-many relation with Product
 
     def __repr__(self):
         return f'<User {self.email}>'
