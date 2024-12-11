@@ -8,7 +8,8 @@ from src.config.settings import db
 
 def get_all_products():
     # Query all products
-    products = ProductModel.query.filter_by(is_deleted=False).all()
+    # products = ProductModel.query.filter_by(is_deleted=False).all()
+    products = ProductModel.query.filter_by(is_deleted=False).order_by(ProductModel.stock.desc()).all()
     
     # Count the total number of products
     total_count = ProductModel.query.count()
@@ -16,7 +17,7 @@ def get_all_products():
     # Return the total count and the list of products
     return jsonify({
         "total_count": total_count,
-        "products": [product.to_dict() for product in products]
+        "data": [product.to_dict() for product in products]
     }), 200
 
 def get_product_by_id(product_id):
