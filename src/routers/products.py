@@ -10,6 +10,7 @@ from src.services.products_service import (
     update_product
 )
 
+
 from src.swagger.products_swagger import (
     GET_ALL_PRODUCTS,
     GET_PRODUCT_BY_ID,
@@ -19,9 +20,12 @@ from src.swagger.products_swagger import (
     DEACTIVATE_PRODUCT
 )
 
+from flask_jwt_extended import jwt_required
+
 products_bp = Blueprint('products', __name__)
 
 @products_bp.route('/products', methods=['GET'])
+@jwt_required()
 @swag_from(GET_ALL_PRODUCTS)
 def get_all_products_route():
     return get_all_products()

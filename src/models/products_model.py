@@ -22,8 +22,8 @@ class ProductModel(db.Model):
     user = db.relationship('UserModel', back_populates='products')  # Relationship back to UserModel
 
     # Use string references to avoid circular import issues
-    discounts = db.relationship('DiscountModel', back_populates='product', lazy=True)
-    # carts = db.relationship('CartModel', backref='product', lazy=True)
+    discounts = db.relationship('DiscountModel', back_populates='product', cascade="all, delete-orphan")
+    carts = db.relationship('CartModel', back_populates='product', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Product(name={self.name}, price={self.price}, category={self.category})>'

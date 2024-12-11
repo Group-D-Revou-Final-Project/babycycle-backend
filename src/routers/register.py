@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 from flasgger import swag_from
 from src.services.user_service import (
-    create_user_account, 
+    create_user_account,
+    login_user, 
     verify_user_account, 
     resend_verification_code, 
     forgot_password, 
@@ -14,6 +15,8 @@ from src.swagger.users_swagger import (
     FORGOT_PASSWORD,
     RESET_PASSWORD
 )
+
+from flask_jwt_extended import jwt_required
 
 register_blueprint = Blueprint('users', __name__)
 
@@ -45,8 +48,8 @@ def resend_verification():
 
     # Call the resend_verification_code function
     return resend_verification_code(email)
-
 @register_blueprint.route('/forgot-password', methods=['POST'])
+@jwt_required()
 @swag_from(FORGOT_PASSWORD)
 def forgot_password_route():
     data = request.get_json()

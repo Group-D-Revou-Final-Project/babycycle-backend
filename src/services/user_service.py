@@ -180,7 +180,6 @@ def reset_password(token, new_password):
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     
-
 def login_user(email, password):
     
     user = UserModel.query.filter_by(email=email).first()
@@ -208,3 +207,4 @@ def login_user(email, password):
         "message": "Login successful",
         "access_token": access_token
     }), 200
+

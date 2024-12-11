@@ -18,6 +18,7 @@ class UserModel(db.Model):
     verification = db.relationship('VerificationModel', back_populates='user', uselist=False, cascade="all, delete-orphan")
     # Define relationship to ProductModel
     products = db.relationship('ProductModel', back_populates='user', cascade="all, delete-orphan")  # One-to-many relation with Product
+    carts = db.relationship('CartModel', back_populates='user', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<User {self.email}>'
