@@ -75,6 +75,43 @@ CREATE_PRODUCT = {
     'tags': ['Products'],
     'summary': 'Create a new product',
     'description': 'Add a new product to the catalog.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'Create a new product',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'user_id': {
+                        'type': 'integer'
+                    },
+                    'name': {
+                        'type': 'string'
+                    },
+                    'price': {
+                        'type': 'number'
+                    },
+                    'category': {
+                        'type': 'string'
+                    },
+                    'descriptions': {
+                        'type': 'string'
+                    },
+                    'is_warranty': {
+                        'type': 'boolean'
+                    },
+                    'image_url': {
+                        'type': 'string'
+                    },
+                    'stock': {
+                        'type': 'integer'
+                    },
+                },
+            }
+        }
+    ],
     'requestBody': {
         'content': {
             'application/json': {
@@ -141,7 +178,6 @@ UPDATE_PRODUCT = {
                         'type': 'integer'
                     },
                 },
-                # 'required': ['account_number']
             }
         }
     ],

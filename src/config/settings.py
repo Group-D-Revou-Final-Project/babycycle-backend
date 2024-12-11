@@ -85,9 +85,11 @@ def create_app(settings_conf=None):
     api_url='/api/v1'
     from src.routers.register import register_blueprint
     from src.routers.products import products_bp
+    from src.routers.carts import carts_bp
 
     app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
     app.register_blueprint(products_bp, url_prefix=api_url)
+    app.register_blueprint(carts_bp, url_prefix=api_url)
     
     # http://127.0.0.1:5000/api/v1/users/register
     
@@ -100,6 +102,6 @@ def create_app(settings_conf=None):
         db.create_all()
         return jsonify({'message': 'Database created successfully'})
 
-     jwt = JWTManager(app)
+    jwt = JWTManager(app)
     
     return app

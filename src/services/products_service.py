@@ -1,4 +1,5 @@
 from flask import jsonify
+from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
 from src.models.discounts_model import DiscountModel
 
@@ -26,17 +27,18 @@ def get_product_by_id(product_id):
         return jsonify({"error": "Product not found"}), 404
     
 
-def create_product(name, price, description, category, is_warranty, image_url, stock):
+def create_product(name, price, descriptions, category, is_warranty, image_url, stock, user_id):
     try:
         # Create a new ProductModel instance
         new_product = ProductModel(
             name=name,
             price=price,
-            description=description,
+            descriptions=descriptions,
             category=category,
             is_warranty=is_warranty,
             image_url=image_url,
-            stock=stock
+            stock=stock,
+            user_id=user_id
         )
         
         # Add to database
@@ -93,3 +95,27 @@ def deactivate_product(product_id):
             return jsonify({"error": str(e)}), 500
     else:
         return jsonify({"error": "Product not found"}), 404
+    
+def user_has_product(email):
+    # Perform the query
+    user_seller = UserModel.query.filter_by(email=email, is_seller=True).first()
+    if user_seller is None:
+        return jsonify({"error": "User Seller not found"}), 404
+    result = db.session.query(
+        UserModel.email,
+        UserModel.username,
+        ProductModel.name,
+        ProductModel.user_id
+    ).join(ProductModel, ProductModel.user_id == UserModel.id).filter(
+        UserModel.email == email
+    ).all()
+
+    if result is None:
+        return jsonify({"error": "User not found"}), 404
+    
+    for row in result:
+        return jsonify({
+            "email": row.email,
+            "username": row.username,
+            "product_name": row.name
+        }), 200

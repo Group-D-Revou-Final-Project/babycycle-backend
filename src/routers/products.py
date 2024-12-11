@@ -7,8 +7,10 @@ from src.services.products_service import (
     get_all_products,
     get_product_by_id,
     create_product,
-    update_product
+    update_product,
+    user_has_product
 )
+
 
 from src.swagger.products_swagger import (
     GET_ALL_PRODUCTS,
@@ -19,10 +21,13 @@ from src.swagger.products_swagger import (
     DEACTIVATE_PRODUCT
 )
 
+from flask_jwt_extended import jwt_required
+
 products_bp = Blueprint('products', __name__)
 
 @products_bp.route('/products', methods=['GET'])
 @swag_from(GET_ALL_PRODUCTS)
+# @jwt_required()
 def get_all_products_route():
     return get_all_products()
 
@@ -41,11 +46,12 @@ def create_product_route():
         # Extract fields
         name = data.get('name')
         price = data.get('price')
-        description = data.get('description', '')  # Optional field, defaults to an empty string
+        descriptions = data.get('description', '')  # Optional field, defaults to an empty string
         category = data.get('category')
         stock = data.get('stock', 0)
         is_warranty = data.get('is_warranty', False)  # Optional field, defaults to False
         image_url = data.get('image_url', '')  # Optional field, defaults to an empty string
+        user_id = data.get('user_id')
 
         # Validate required fields
         if not name or not price or not category or not stock:
@@ -55,11 +61,12 @@ def create_product_route():
         return create_product(
             name=name,
             price=price,
-            description=description,
+            descriptions=descriptions,
             category=category,
             is_warranty=is_warranty, 
             image_url=image_url,
-            stock=stock
+            stock=stock,
+            user_id=user_id
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -107,3 +114,9 @@ def delete_product_route(product_id):
 @swag_from(DEACTIVATE_PRODUCT)
 def deactivate_product_route(product_id):
     return deactivate_product(product_id)
+
+@products_bp.route('/products/users/has_products', methods=['POST'])
+def user_has_products_route():
+    data = request.get_json()
+    email = data.get('email')
+    return user_has_product(email=email)
