@@ -201,7 +201,7 @@ def login_user(email, password):
     }
 
     
-    access_token = create_access_token(identity=user.id, additional_claims=additional_claims)
+    access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
 
     return jsonify({
         "message": "Login successful",

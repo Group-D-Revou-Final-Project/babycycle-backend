@@ -25,8 +25,8 @@ from flask_jwt_extended import jwt_required
 products_bp = Blueprint('products', __name__)
 
 @products_bp.route('/products', methods=['GET'])
-@jwt_required()
 @swag_from(GET_ALL_PRODUCTS)
+@jwt_required()
 def get_all_products_route():
     return get_all_products()
 

@@ -26,3 +26,13 @@ class CartModel(db.Model):
     def calculate_total_price(self):
         """Calculate the total price for the cart item (quantity * price of the product)."""
         return self.quantity * self.product.price
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "user_id": self.user_id,
+            "quantity": self.quantity,
+            "total_price": self.total_price,
+            "user_address": self.user_address,
+        }
