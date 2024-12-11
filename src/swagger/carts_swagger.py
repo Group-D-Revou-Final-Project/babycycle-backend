@@ -1,0 +1,228 @@
+CREATE_CARTS = {
+    'tags': ['Carts'],
+    'summary': 'Create a new product',
+    'description': 'Add a new carts.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'Create a new cart',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'product_id': {
+                        'type': 'integer'
+                    },
+                    'user_id': {
+                        'type': 'integer'
+                    },
+                    'quantity': {
+                        'type': 'number'
+                    },
+                    'user_address': {
+                        'type': 'string'
+                    },
+                    'total_price': {
+                        'type': 'number',
+                        'format': 'float'
+                    },
+                },
+            }
+        }
+    ],
+    'requestBody': {
+        'content': {
+            'application/json': {
+                'example': {
+                    'product_id': 101,
+                    'user_id': 10,
+                    'quantity': 2,
+                    'user_address': '123 Main Street',
+                    'total_price': 200.00
+                }
+            }
+        },
+    },
+    'responses': {
+        201: {
+            'description': 'Cart created successfully',
+        },
+        400: {
+            'description': 'Invalid input'
+        }
+    }
+}
+
+
+GET_CARTS = {
+    'tags': ['Carts'],
+    'responses': {
+        200: {
+            'description': 'List of all carts',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'carts': [
+                            {
+                                'id': 1,
+                                'product_id': 101,
+                                'user_id': 10,
+                                'quantity': 2,
+                                'user_address': '123 Main Street',
+                                'total_price': 200.00,
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    },
+    'parameters': [],
+    'description': 'Retrieve all carts or create a new cart',
+    'requestBody': {
+        'content': {
+            'application/json': {
+                'example': {
+                    'product_id': 101,
+                    'user_id': 10,
+                    'quantity': 2,
+                    'user_address': '123 Main Street',
+                    'total_price': 200.00
+                }
+            }
+        },
+        'required': True
+    }
+}
+GET_CARTS_BY_ID = {
+    'tags': ['Carts'],
+    'summary': 'Retrieve a carts by ID',
+    'description': 'Fetch details of a product by its ID.',
+    'parameters': [
+        {
+            'name': 'cart_id',
+            'in': 'path',
+            'required': True,
+            'description': 'The ID of the cart',
+            'schema': {
+                'type': 'integer'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'cart details',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'id': 1,
+                        'product_id': 2,
+                        'user_id': 3,
+                        'quantity': 4,
+                        'user_address': '123 Main Street',
+                        'total_price': 200.00
+                    }
+                }
+            }
+        },
+        404: {
+            'description': 'Cart not found'
+        }
+    }
+}
+
+UPDATE_CARTS = {
+    'tags': ['Carts'],
+    'summary': 'Update a Carts',
+    'description': 'Update an existing carts by its ID.',
+    'parameters': [
+        {
+            'name': 'cart_id',
+            'in': 'path',
+            'required': True,
+            'description': 'The ID of the carts to update',
+            'schema': {
+                'type': 'integer'
+            }
+        },
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'The updated carts details',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'quantity': {
+                        'type': 'number'
+                    },
+                    'total_price': {
+                        'type': 'number',
+                        'format': 'float'
+                    }
+                },
+            }
+        }
+    ],
+    'requestBody': {
+        'required': True,
+        'content': {
+            'application/json': {
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'quantity': {
+                            'type': 'number',
+                            'example': 3
+                        },
+                        'total_price': {
+                            'type': 'number',
+                            'format': 'float',
+                            'example': 11000.00
+                        },  
+                    },
+                    'required': ['quantity', 'total_price']
+                }
+            }
+        }
+    },
+    'responses': {
+        200: {
+            'description': 'Carts updated successfully',
+        },
+        400: {
+            'description': 'Invalid input'
+        },
+        404: {
+            'description': 'Product not found'
+        }
+    }
+}
+
+DELETE_CARTS = {
+    'tags': ['Carts'],
+    'summary': 'Delete a cart',
+    'description': 'Remove a cart by its ID.',
+    'parameters': [
+        {
+            'name': 'cart_id',
+            'in': 'path',
+            'required': True,
+            'description': 'The ID of the cart to delete',
+            'schema': {
+                'type': 'integer'
+            }
+        }
+    ],
+    'responses': {
+        204: {
+            'description': 'Cart deleted successfully'
+        },
+        404: {
+            'description': 'Cart not found'
+        }
+    }}

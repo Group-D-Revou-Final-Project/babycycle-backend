@@ -58,6 +58,61 @@ REGISTER_USER = {
         }
     }
 }
+LOGIN_USER = {
+    'tags': ['Users'],
+    'summary': 'User Login',
+    'description': 'Login user with email and password.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'The login details',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'email': {
+                        'type': 'string',
+                        'example': 'johndoe@example.com'
+                    },
+                    'password': {
+                        'type': 'string',
+                        'example': 'securepassword123'
+                    }
+                }
+            }
+        
+        }
+    ],
+    'requestBody': {
+        'content': {
+            'application/json': {
+                'example': {
+                    'email': 'johndoe@example.com',
+                    'password': 'securepassword123'
+                }
+            }
+        }
+    },
+    'responses': {
+        200: {
+            'description': 'User account created successfully',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'message': 'User created successfully'
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Bad request (e.g., missing or invalid fields)'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
 
 VERIFY_USER = {
     'tags': ['Users'],

@@ -37,5 +37,6 @@ class ProductModel(db.Model):
             'category': self.category,
             'is_warranty': self.is_warranty,
             'image_url': self.image_url,
-            'stock': self.stock
+            'stock': self.stock,
+            'user_id': self.user_id
         }

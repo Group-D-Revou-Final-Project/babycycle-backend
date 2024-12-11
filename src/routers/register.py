@@ -9,6 +9,7 @@ from src.services.user_service import (
     reset_password
     )
 from src.swagger.users_swagger import (
+    LOGIN_USER,
     REGISTER_USER,
     VERIFY_USER,
     RESEND_VERIFICATION,
@@ -69,6 +70,7 @@ def reset_password_route(token):
 
 
 @register_blueprint.route('/login', methods=['POST'])
+@swag_from(LOGIN_USER)
 def login():
     data = request.get_json()
     email = data.get('email')
