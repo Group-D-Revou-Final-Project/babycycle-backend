@@ -33,7 +33,7 @@ class DiscountModel(db.Model):
             "id": self.id,
             "product_id": self.product_id,
             "discount_percentage": self.discount_percentage,
-            "discount_amount": self.discount_amount,
+            # "discount_amount": self.discount_amount,
             "start_date": self.start_date,
             "end_date": self.end_date,
             "is_active": self.is_active
