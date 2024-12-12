@@ -27,7 +27,7 @@ def create_app(settings_conf=None):
 
     # Enable CORS
     # CORS configuration allowing only specific domain
-    CORS(app, origins=["https://api.babycycle.my.id","http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000"], supports_credentials=True)
+    CORS(app, origins=["https://api.babycycle.my.id", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000"], supports_credentials=True)
     # Swagger configuration for securityDefinitions
     swagger_config = {
         "swagger": "2.0",

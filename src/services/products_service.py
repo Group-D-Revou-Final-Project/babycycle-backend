@@ -9,7 +9,7 @@ from src.config.settings import db
 def get_all_products():
     # Query all products
     # products = ProductModel.query.filter_by(is_deleted=False).all()
-    products = ProductModel.query.filter_by(is_deleted=False).order_by(ProductModel.stock.desc()).all()
+    products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False).order_by(ProductModel.stock.desc()).all()
     
     # Count the total number of products
     total_count = ProductModel.query.count()
@@ -19,6 +19,22 @@ def get_all_products():
         "total_count": total_count,
         "data": [product.to_dict() for product in products]
     }), 200
+
+def get_all_products_limit_offset(limit, offset):
+    
+    if limit < 1 or offset < 0:
+        return jsonify({"error": "Limit must be greater than 0 and offset must be non-negative"}), 400
+    
+    products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
+        .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+    
+    total_count = ProductModel.query.count()
+    
+    return jsonify({
+        "total_count": total_count,
+        "data": [product.to_dict() for product in products]
+    }), 200
+    
 
 def get_product_by_id(product_id):
     product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
@@ -120,3 +136,78 @@ def user_has_product(email):
             "username": row.username,
             "product_name": row.name
         }), 200
+
+def get_products_by_sorting(sort_by, limit, offset):
+
+    if limit < 1 or offset < 0:
+        return jsonify({"error": "Limit must be greater than 0 and offset must be non-negative"}), 400
+
+    match sort_by:
+        case "highest_price":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
+                .order_by(ProductModel.price.desc()).limit(limit).offset(offset).all()
+        case "lowest_price":  
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
+                .order_by(ProductModel.price.asc()).limit(limit).offset(offset).all()
+        case "newest":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
+                .order_by(ProductModel.created_at.desc()).limit(limit).offset(offset).all()
+        case "stock":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
+                .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+        case _:  
+            return jsonify({"error": "Invalid sorting parameter"}), 400
+
+    total_count = ProductModel.query.filter_by(is_deleted=False, ).count()
+
+    return jsonify({
+        "total_count": total_count,
+        "data": [product.to_dict() for product in products]
+    }), 200
+
+def get_products_by_category(category, limit, offset):
+    if limit < 1 or offset < 0:
+        return jsonify({"error": "Limit must be greater than 0 and offset must be non-negative"}), 400
+    
+    match category:
+        case "clothing":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
+                .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+        case "furniture":  
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
+                .order_by(ProductModel.stock.asc()).limit(limit).offset(offset).all()
+        case "toys":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
+                .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+        case "others":
+            products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
+                .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+        case _:  
+            return jsonify({"error": "Available category: clothing, furniture, toys, others"}), 400
+
+    # products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
+    #     .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+
+    total_count = ProductModel.query.filter_by(is_deleted=False, category=category).count()
+
+    return jsonify({
+        "total_count": total_count,
+        "data": [product.to_dict() for product in products]
+    }), 200
+
+def get_product_by_warranty(is_warranty, limit, offset):
+    if limit < 1 or offset < 0:
+        return jsonify({"error": "Limit must be greater than 0 and offset must be non-negative"}), 400
+    
+    products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, is_warranty=is_warranty) \
+        .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
+    
+    if not products:
+        return jsonify({"error": "No products found"}), 404
+    
+    total_count = ProductModel.query.filter_by(is_deleted=False, is_warranty=is_warranty).count()
+
+    return jsonify({
+        "total_count": total_count,
+        "data": [product.to_dict() for product in products]
+    }), 200
