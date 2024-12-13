@@ -26,8 +26,6 @@ from src.swagger.products_swagger import (
     GET_PRODUCTS_BY_CATEGORY
 )
 
-from flask_jwt_extended import jwt_required
-
 products_bp = Blueprint('products', __name__)
 
 @products_bp.route('/products', methods=['GET'])
@@ -65,7 +63,7 @@ def create_product_route():
         stock = data.get('stock', 0)
         is_warranty = data.get('is_warranty', False)  # Optional field, defaults to False
         image_url = data.get('image_url', '')  # Optional field, defaults to an empty string
-        user_id = data.get('user_id')
+        # user_id = data.get('user_id')
 
         # Validate required fields
         if not name or not price or not category or not stock:
@@ -79,8 +77,8 @@ def create_product_route():
             category=category,
             is_warranty=is_warranty, 
             image_url=image_url,
-            stock=stock,
-            user_id=user_id
+            stock=stock
+            # user_id=user_id
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500

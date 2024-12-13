@@ -44,7 +44,7 @@ def get_product_by_id(product_id):
         return jsonify({"error": "Product not found"}), 404
     
 
-def create_product(name, price, descriptions, category, is_warranty, image_url, stock, user_id):
+def create_product(name, price, descriptions, category, is_warranty, image_url, stock):
     try:
         # Create a new ProductModel instance
         new_product = ProductModel(
@@ -55,7 +55,7 @@ def create_product(name, price, descriptions, category, is_warranty, image_url, 
             is_warranty=is_warranty,
             image_url=image_url,
             stock=stock,
-            user_id=user_id
+            # user_id=user_id
         )
         
         # Add to database

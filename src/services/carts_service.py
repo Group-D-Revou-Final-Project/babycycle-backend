@@ -2,8 +2,16 @@ from flask import jsonify
 from src.models.products_model import ProductModel
 from src.models.users_model import UserModel
 from src.models.carts_model import CartModel
+from src.models.carts_collection_model import CartsCollectionModel
 from src.config.settings import db
 
+
+def get_all_carts_collection():
+    try:
+        carts_collection = CartsCollectionModel.query.all()
+        return jsonify([cart.to_dict() for cart in carts_collection]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 def get_all_carts():
     try:

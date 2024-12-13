@@ -6,6 +6,8 @@ class CartsCollectionModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     carts_id = db.Column(db.Integer, db.ForeignKey('carts.id', ondelete="CASCADE"), nullable=False)  # Product reference
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     
     # Relationship with ProductModel
