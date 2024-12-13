@@ -31,15 +31,6 @@ def cart_route_get_all():
    
 @carts_bp.route('/carts', methods=['POST'])
 @swag_from(CREATE_CARTS)
-# def cart_route_post():
-#     data = request.get_json()
-#     product_id = data.get('product_id')
-#     user_id = data.get('user_id')
-#     quantity = data.get('quantity')
-#     user_address = data.get('user_address')
-#     total_price = data.get('total_price')
-
-#     return create_cart(product_id=product_id, user_id=user_id, quantity=quantity, user_address=user_address, total_price=total_price)
 def cart_route_post():
     try:
         # Parse the incoming JSON body
@@ -60,10 +51,11 @@ def cart_route_post():
 
             # Validate required fields
             if not all([product_id, user_id, quantity, user_address, total_price]):
-                return jsonify({"error": "Missing required fields in cart item"}), 400
+                results.append({"error": "Missing required fields in cart item", "item": item})
+                continue
 
-            # Create each cart item
-            result = create_cart(
+            # Create or update each cart item
+            response = create_cart(
                 user_id=user_id,
                 product_id=product_id,
                 quantity=quantity,
@@ -71,19 +63,24 @@ def cart_route_post():
                 user_address=user_address
             )
 
-            # If there was an error creating this cart item, add the error to results
-            if isinstance(result, tuple) and result[1] != 201:
-                results.append({"error": result[0].json["error"]})
+            # Check the response status code
+            if isinstance(response, tuple):
+                # Extract error message from the response if it is an error
+                if response[1] != 201 and response[1] != 200:
+                    error_message = response[0].json.get("error", "Unknown error")
+                    results.append({"error": error_message, "item": item})
+                else:
+                    results.append(response[0].json)
             else:
-                results.append(result)
+                results.append(response)
 
-        # Return results
+        # Return the results
         return jsonify({
             "message": "Cart items processed",
             "results": results
-        }), 201
+        }), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 @carts_bp.route('/carts/<int:cart_id>', methods=['GET'])
 @swag_from(GET_CARTS_BY_ID)

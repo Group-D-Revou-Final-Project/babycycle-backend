@@ -30,33 +30,6 @@ def get_cart_by_id(cart_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# def create_cart(user_id, product_id, quantity, total_price, user_address):
-#     try:
-#         # Create a new CartModel instance
-#         user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
-#         product = ProductModel.query.filter_by(id=product_id, is_deleted=False, is_deactivated=False).first()
-
-#         if not user and not product:
-#             return jsonify({"error": "User or product not found"}), 404
-        
-#         if product.stock < quantity:
-#             return jsonify({"error": "Not enough stock available"}), 400
-        
-#         current_cart = CartModel.query.filter_by(user_id=user_id, product_id=product_id).first()
-#         if current_cart:
-#             return jsonify({"error": "Product already in cart"}), 400
-
-#         new_cart = CartModel(user_id=user_id, product_id=product_id, quantity=quantity, total_price=total_price, user_address=user_address)
-        
-#         # Add to database
-#         db.session.add(new_cart)
-#         db.session.commit()
-        
-#         # Return the created cart
-#         return jsonify(new_cart.to_dict()), 201
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({"error": str(e)}), 500
 def create_cart(user_id, product_id, quantity, total_price, user_address):
     try:
         # Check if the user is verified
@@ -75,10 +48,16 @@ def create_cart(user_id, product_id, quantity, total_price, user_address):
 
         # Check if the product is already in the user's cart
         current_cart = CartModel.query.filter_by(user_id=user_id, product_id=product_id).first()
-        if current_cart:
-            return jsonify({"error": f"Product {product_id} already in cart"}), 400
 
-        # Create the new cart item
+        if current_cart:
+            # Update the existing cart item
+            current_cart.quantity = quantity
+            current_cart.total_price = total_price
+            current_cart.user_address = user_address
+            db.session.commit()
+            return jsonify({"message": "Cart item updated successfully", "data": current_cart.to_dict()}), 200
+
+        # Create a new cart item
         new_cart = CartModel(
             user_id=user_id,
             product_id=product_id,
@@ -91,10 +70,10 @@ def create_cart(user_id, product_id, quantity, total_price, user_address):
         db.session.add(new_cart)
         db.session.commit()
 
-        return new_cart.to_dict(), 201
+        return jsonify({"message": "Cart item created successfully", "data": new_cart.to_dict()}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 def update_cart(cart_id, quantity, total_price):
     try:
