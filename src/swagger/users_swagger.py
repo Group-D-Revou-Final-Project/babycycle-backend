@@ -296,3 +296,77 @@ RESET_PASSWORD = {
         }
     }
 }
+GET_USER_BY_ID = {
+    'tags': ['Users'],
+    'summary': 'Retrieve a user by ID',
+    'description': 'Fetch a single user by their unique ID.',
+    'parameters': [
+        {
+            'name': 'user_id',
+            'in': 'path',
+            'required': True,
+            'description': 'The ID of the user to retrieve',
+            'schema': {
+                'type': 'integer'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'User found successfully',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'id': 1,
+                        'name': 'John Doe',
+                        'email': 'johndoe@example.com',
+                        'created_at': '2024-12-08T14:23:30+00:00',
+                        'updated_at': '2024-12-08T14:23:30+00:00'
+                    }
+                }
+            }
+        },
+        404: {
+            'description': 'User not found'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
+
+GET_ALL_USERS = {
+    'tags': ['Users'],
+    'summary': 'Retrieve all users',
+    'description': 'Fetch a list of all users.',
+    'responses': {
+        200: {
+            'description': 'List of all users',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'users': [
+                            {
+                                'id': 1,
+                                'name': 'John Doe',
+                                'email': 'johndoe@example.com',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            },
+                            {
+                                'id': 2,
+                                'name': 'Jane Smith',
+                                'email': 'janesmith@example.com',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
