@@ -33,7 +33,7 @@ class CartModel(db.Model):
         return {
             "id": self.id,
             "product_id": self.product_id,
-            "user_id": self.user_id,
+            # "user_id": self.user_id,
             "quantity": self.quantity,
             "total_price": self.total_price,
             "user_address": self.user_address,
