@@ -69,12 +69,12 @@ def reset_password_route(token):
 
 
 
-@register_blueprint.route('/login', methods=['POST'])
-@swag_from(LOGIN_USER)
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+# @register_blueprint.route('/login', methods=['POST'])
+# @swag_from(LOGIN_USER)
+# def login():
+#     data = request.get_json()
+#     email = data.get('email')
+#     password = data.get('password')
 
 
-    return login_user(email=email, password=password)
+#     return login_user(email=email, password=password)

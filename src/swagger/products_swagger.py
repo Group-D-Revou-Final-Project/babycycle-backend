@@ -286,3 +286,164 @@ DEACTIVATE_PRODUCT = {
         }
     }
 }
+GET_PRODUCTS_BY_SORTING = {
+    'tags': ['Products'],
+    'summary': 'Retrieve products with sorting, pagination, and filtering',
+    'description': 'Fetch a list of products sorted by a specified field with pagination.',
+    'parameters': [
+        {
+            'name': 'limit',
+            'in': 'query',
+            'required': False,
+            'description': 'The maximum number of products to return',
+            'schema': {
+                'type': 'integer',
+                'default': 10
+            }
+        },
+        {
+            'name': 'offset',
+            'in': 'query',
+            'required': False,
+            'description': 'The number of products to skip before starting to collect the result set',
+            'schema': {
+                'type': 'integer',
+                'default': 0
+            }
+        },
+        {
+            'name': 'sort_by',
+            'in': 'query',
+            'required': False,
+            'description': 'The field to sort products by (e.g., stock, price, name)',
+            'schema': {
+                'type': 'string',
+                'default': 'stock'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'List of products sorted and paginated',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'total_count': 50,
+                        'products': [
+                            {
+                                'id': 1,
+                                'name': 'Laptop',
+                                'price': 1200.00,
+                                'description': 'A powerful laptop',
+                                'category': 'Electronics',
+                                'stock': 5,
+                                'is_warranty': True,
+                                'image_url': 'http://example.com/laptop.jpg',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            },
+                            {
+                                'id': 2,
+                                'name': 'Smartphone',
+                                'price': 800.00,
+                                'description': 'A sleek smartphone',
+                                'category': 'Electronics',
+                                'stock': 10,
+                                'is_warranty': True,
+                                'image_url': 'http://example.com/smartphone.jpg',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Invalid query parameters'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
+GET_PRODUCTS_BY_CATEGORY = {
+    'tags': ['Products'],
+    'summary': 'Retrieve products by category with pagination',
+    'description': 'Fetch a list of products filtered by a specific category, with optional pagination.',
+    'parameters': [
+        {
+            'name': 'limit',
+            'in': 'query',
+            'required': False,
+            'description': 'The maximum number of products to return',
+            'schema': {
+                'type': 'integer',
+                'default': 10
+            }
+        },
+        {
+            'name': 'offset',
+            'in': 'query',
+            'required': False,
+            'description': 'The number of products to skip before starting to collect the result set',
+            'schema': {
+                'type': 'integer',
+                'default': 0
+            }
+        },
+        {
+            'name': 'category',
+            'in': 'query',
+            'required': True,
+            'description': 'The category to filter products by',
+            'schema': {
+                'type': 'string'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'List of products filtered by category and paginated',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'total_count': 20,
+                        'products': [
+                            {
+                                'id': 1,
+                                'name': 'Laptop',
+                                'price': 1200.00,
+                                'description': 'A powerful laptop',
+                                'category': 'Electronics',
+                                'stock': 5,
+                                'is_warranty': True,
+                                'image_url': 'http://example.com/laptop.jpg',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            },
+                            {
+                                'id': 2,
+                                'name': 'Smartphone',
+                                'price': 800.00,
+                                'description': 'A sleek smartphone',
+                                'category': 'Electronics',
+                                'stock': 10,
+                                'is_warranty': True,
+                                'image_url': 'http://example.com/smartphone.jpg',
+                                'created_at': '2024-12-08T14:23:30+00:00',
+                                'updated_at': '2024-12-08T14:23:30+00:00'
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Invalid query parameters or missing category'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}

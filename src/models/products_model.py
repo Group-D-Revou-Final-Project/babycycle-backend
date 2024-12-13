@@ -18,8 +18,8 @@ class ProductModel(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))  # Update time
 
     # Foreign key and relationship with UserModel
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
-    user = db.relationship('UserModel', back_populates='products')  # Relationship back to UserModel
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+    # user = db.relationship('UserModel', back_populates='products')  # Relationship back to UserModel
 
     # Use string references to avoid circular import issues
     discounts = db.relationship('DiscountModel', back_populates='product', cascade="all, delete-orphan")
@@ -38,5 +38,6 @@ class ProductModel(db.Model):
             'is_warranty': self.is_warranty,
             'image_url': self.image_url,
             'stock': self.stock,
-            'user_id': self.user_id
+            # 'user_id': self.user_id,
+            'created_at': self.created_at
         }

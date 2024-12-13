@@ -6,7 +6,8 @@ from src.services.carts_service import (
     get_cart_by_id,
     create_cart,
     update_cart,
-    delete_cart
+    delete_cart,
+    get_all_carts_collection
 )
 from src.swagger.carts_swagger import (
     DELETE_CARTS,
@@ -17,6 +18,10 @@ from src.swagger.carts_swagger import (
 )
 
 carts_bp = Blueprint('carts', __name__)
+
+@carts_bp.route('/carts/collections', methods=['GET'])
+def cart_route_get_collections():
+    return get_all_carts_collection()
 
 @carts_bp.route('/carts', methods=['GET'])
 @swag_from(GET_CARTS)

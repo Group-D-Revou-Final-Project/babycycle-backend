@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from decimal import Decimal
 from src.config.settings import db
 
 class DiscountModel(db.Model):
@@ -17,10 +18,23 @@ class DiscountModel(db.Model):
     def __repr__(self):
         return f"<Discount(product_id={self.product_id}, discount_percentage={self.discount_percentage}, active={self.active})>"
 
+
     def get_discounted_price(self, product_price):
         """Calculate discounted price."""
         if self.discount_percentage:
-            return product_price * (1 - self.discount_percentage / 100)
+            # Ensure both operands are of type Decimal
+            product_price = Decimal(str(product_price))  # Convert float to Decimal
+            return product_price * (1 - self.discount_percentage / Decimal('100'))  # Use Decimal for arithmetic
         elif self.discount_amount:
             return product_price - self.discount_amount
         return product_price
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "product_id": self.product_id,
+            "discount_percentage": self.discount_percentage,
+            # "discount_amount": self.discount_amount,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "is_active": self.is_active
+        }
