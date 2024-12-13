@@ -1,55 +1,131 @@
+# CREATE_CARTS = {
+#     'tags': ['Carts'],
+#     'summary': 'Create a new product',
+#     'description': 'Add a new carts.',
+#     'parameters': [
+#         {
+#             'name': 'body',
+#             'in': 'body',
+#             'required': True,
+#             'description': 'Create a new cart',
+#             'schema': {
+#                 'type': 'object',
+#                 'properties': {
+#                     'product_id': {
+#                         'type': 'integer'
+#                     },
+#                     'user_id': {
+#                         'type': 'integer'
+#                     },
+#                     'quantity': {
+#                         'type': 'number'
+#                     },
+#                     'user_address': {
+#                         'type': 'string'
+#                     },
+#                     'total_price': {
+#                         'type': 'number',
+#                         'format': 'float'
+#                     },
+#                 },
+#             }
+#         }
+#     ],
+#     'requestBody': {
+#         'content': {
+#             'application/json': {
+#                 'example': {
+#                     'product_id': 101,
+#                     'user_id': 10,
+#                     'quantity': 2,
+#                     'user_address': '123 Main Street',
+#                     'total_price': 200.00
+#                 }
+#             }
+#         },
+#     },
+#     'responses': {
+#         201: {
+#             'description': 'Cart created successfully',
+#         },
+#         400: {
+#             'description': 'Invalid input'
+#         }
+#     }
+# }
 CREATE_CARTS = {
     'tags': ['Carts'],
-    'summary': 'Create a new product',
-    'description': 'Add a new carts.',
+    'summary': 'Create new carts',
+    'description': 'Add multiple cart items to the database.',
     'parameters': [
         {
             'name': 'body',
             'in': 'body',
             'required': True,
-            'description': 'Create a new cart',
+            'description': 'Array of cart items to be created.',
             'schema': {
-                'type': 'object',
-                'properties': {
-                    'product_id': {
-                        'type': 'integer'
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'product_id': {
+                            'type': 'integer',
+                            'description': 'ID of the product'
+                        },
+                        'user_id': {
+                            'type': 'integer',
+                            'description': 'ID of the user'
+                        },
+                        'quantity': {
+                            'type': 'number',
+                            'description': 'Quantity of the product'
+                        },
+                        'user_address': {
+                            'type': 'string',
+                            'description': 'Address of the user'
+                        },
+                        'total_price': {
+                            'type': 'number',
+                            'format': 'float',
+                            'description': 'Total price for the product quantity'
+                        },
                     },
-                    'user_id': {
-                        'type': 'integer'
-                    },
-                    'quantity': {
-                        'type': 'number'
-                    },
-                    'user_address': {
-                        'type': 'string'
-                    },
-                    'total_price': {
-                        'type': 'number',
-                        'format': 'float'
-                    },
-                },
+                    'required': ['product_id', 'user_id', 'quantity', 'user_address', 'total_price']
+                }
             }
         }
     ],
     'requestBody': {
         'content': {
             'application/json': {
-                'example': {
-                    'product_id': 101,
-                    'user_id': 10,
-                    'quantity': 2,
-                    'user_address': '123 Main Street',
-                    'total_price': 200.00
-                }
+                'example': [
+                    {
+                        'product_id': 101,
+                        'user_id': 10,
+                        'quantity': 2,
+                        'user_address': '123 Main Street',
+                        'total_price': 200.00
+                    },
+                    {
+                        'product_id': 102,
+                        'user_id': 10,
+                        'quantity': 1,
+                        'user_address': '123 Main Street',
+                        'total_price': 100.00
+                    }
+                ]
             }
-        },
+        }
     },
     'responses': {
         201: {
-            'description': 'Cart created successfully',
+            'description': 'Cart items created successfully',
         },
         400: {
-            'description': 'Invalid input'
+            'description': 'Invalid input or missing fields in one or more items'
+        },
+        500: {
+            'description': 'Internal server error'
         }
     }
 }

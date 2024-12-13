@@ -31,15 +31,59 @@ def cart_route_get_all():
    
 @carts_bp.route('/carts', methods=['POST'])
 @swag_from(CREATE_CARTS)
-def cart_route_post():
-    data = request.get_json()
-    product_id = data.get('product_id')
-    user_id = data.get('user_id')
-    quantity = data.get('quantity')
-    user_address = data.get('user_address')
-    total_price = data.get('total_price')
+# def cart_route_post():
+#     data = request.get_json()
+#     product_id = data.get('product_id')
+#     user_id = data.get('user_id')
+#     quantity = data.get('quantity')
+#     user_address = data.get('user_address')
+#     total_price = data.get('total_price')
 
-    return create_cart(product_id=product_id, user_id=user_id, quantity=quantity, user_address=user_address, total_price=total_price)
+#     return create_cart(product_id=product_id, user_id=user_id, quantity=quantity, user_address=user_address, total_price=total_price)
+def cart_route_post():
+    try:
+        # Parse the incoming JSON body
+        data = request.get_json()
+
+        # Ensure data is an array
+        if not isinstance(data, list):
+            return jsonify({"error": "Expected a list of cart items"}), 400
+
+        # Process each cart item in the array
+        results = []
+        for item in data:
+            product_id = item.get('product_id')
+            user_id = item.get('user_id')
+            quantity = item.get('quantity')
+            user_address = item.get('user_address')
+            total_price = item.get('total_price')
+
+            # Validate required fields
+            if not all([product_id, user_id, quantity, user_address, total_price]):
+                return jsonify({"error": "Missing required fields in cart item"}), 400
+
+            # Create each cart item
+            result = create_cart(
+                user_id=user_id,
+                product_id=product_id,
+                quantity=quantity,
+                total_price=total_price,
+                user_address=user_address
+            )
+
+            # If there was an error creating this cart item, add the error to results
+            if isinstance(result, tuple) and result[1] != 201:
+                results.append({"error": result[0].json["error"]})
+            else:
+                results.append(result)
+
+        # Return results
+        return jsonify({
+            "message": "Cart items processed",
+            "results": results
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @carts_bp.route('/carts/<int:cart_id>', methods=['GET'])
 @swag_from(GET_CARTS_BY_ID)
