@@ -69,7 +69,7 @@ def reset_password_route(token):
 
     return reset_password(token, new_password)
 
-@register_blueprint.route('/<user_id>', methods=['GET'])
+@register_blueprint.route('/me/<user_id>', methods=['GET'])
 @swag_from(GET_USER_BY_ID)
 def get_user_from_id_route(user_id):
     # Call the get_user_from_id function
