@@ -16,10 +16,11 @@ from src.swagger.users_swagger import (
     FORGOT_PASSWORD,
     RESET_PASSWORD,
     GET_ALL_USERS,
-    GET_USER_BY_ID
+    GET_USER_FROM_ID_ROUTE
 )
 
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
 
 register_blueprint = Blueprint('users', __name__)
 
@@ -69,11 +70,18 @@ def reset_password_route(token):
 
     return reset_password(token, new_password)
 
-@register_blueprint.route('/me/<user_id>', methods=['GET'])
-@swag_from(GET_USER_BY_ID)
-def get_user_from_id_route(user_id):
+# @register_blueprint.route('/me/<user_id>', methods=['GET'])
+# @swag_from(GET_USER_BY_ID)
+# def get_user_from_id_route(user_id):
+#     # Call the get_user_from_id function
+#     return get_user_by_id(user_id)
+@register_blueprint.route('/me', methods=['GET'])
+@jwt_required()
+@swag_from(GET_USER_FROM_ID_ROUTE)
+def get_user_from_id_route():
     # Call the get_user_from_id function
-    return get_user_by_id(user_id)
+    userID = get_jwt_identity()
+    return get_user_by_id(user_id=userID)
 
 @register_blueprint.route('/', methods=['GET'])
 @swag_from(GET_ALL_USERS)

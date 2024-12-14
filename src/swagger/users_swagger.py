@@ -370,3 +370,45 @@ GET_ALL_USERS = {
         }
     }
 }
+GET_USER_FROM_ID_ROUTE = {
+    'tags': ['Users'],
+    'summary': 'Retrieve the authenticated user based on JWT token',
+    'description': 'Fetch the user information associated with the JWT token provided in the Authorization header.',
+    'parameters': [
+        {
+            'name': 'Authorization',
+            'in': 'header',
+            'required': True,
+            'description': 'Bearer token for authentication',
+            'schema': {
+                'type': 'string',
+                'example': 'Bearer <your-token>'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'Authenticated user details retrieved successfully',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'id': 1,
+                        'name': 'John Doe',
+                        'email': 'johndoe@example.com',
+                        'created_at': '2024-12-08T14:23:30+00:00',
+                        'updated_at': '2024-12-08T14:23:30+00:00'
+                    }
+                }
+            }
+        },
+        401: {
+            'description': 'Unauthorized - Invalid or missing token'
+        },
+        404: {
+            'description': 'User not found'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
