@@ -156,7 +156,8 @@ def get_products_by_category_route():
 def get_products_by_warranty():
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
-    is_warranty = request.args.get('is_warranty', default=True, type=bool)
+    # is_warranty = request.args.get('is_warranty', default=True, type=bool)
+    is_warranty = request.args.get('is_warranty', default="true").lower() in ["true", "1", "yes"]
 
     return get_product_by_warranty(is_warranty=is_warranty, limit=limit, offset=offset)
 
