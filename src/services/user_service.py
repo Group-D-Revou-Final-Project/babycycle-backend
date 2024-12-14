@@ -208,3 +208,43 @@ def login_user(email, password):
         "access_token": access_token
     }), 200
 
+def get_user_by_id(user_id):
+    try:
+        # Fetch user by ID
+        user = UserModel.query.get(user_id)
+        
+        # Check if user exists
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Return user data
+        return jsonify({
+            "data": user.to_dict()
+        }), 200
+    except Exception as e:
+        # Handle unexpected errors
+        return jsonify({
+            "error": "An error occurred while fetching the user.",
+            "details": str(e)
+        }), 500
+
+
+def get_all_users():
+    try:
+        # Fetch all users from the database
+        users = UserModel.query.all()
+
+        # Check if users exist
+        if not users:
+            return jsonify({"message": "No users found"}), 404
+
+        # Return the user data in JSON format
+        return jsonify({
+            "data": [user.to_dict() for user in users]
+        }), 200
+    except Exception as e:
+        # Handle any unexpected errors
+        return jsonify({
+            "error": "An error occurred while fetching users.",
+            "details": str(e)
+        }), 500

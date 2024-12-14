@@ -12,7 +12,7 @@ def get_all_products():
     products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False).order_by(ProductModel.stock.desc()).all()
     
     # Count the total number of products
-    total_count = ProductModel.query.count()
+    total_count = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False).count()
     
     # Return the total count and the list of products
     return jsonify({
@@ -28,7 +28,7 @@ def get_all_products_limit_offset(limit, offset):
     products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False) \
         .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
     
-    total_count = ProductModel.query.count()
+    total_count = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False).count()
     
     return jsonify({
         "total_count": total_count,
@@ -37,7 +37,7 @@ def get_all_products_limit_offset(limit, offset):
     
 
 def get_product_by_id(product_id):
-    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False, is_deactivated=False).first()
     if product:
         return jsonify(product.to_dict()), 200
     else:
@@ -69,7 +69,7 @@ def create_product(name, price, descriptions, category, is_warranty, image_url, 
         return jsonify({"error": str(e)}), 500
 
 def update_product(product_id, name, price, descriptions, category, is_warranty, image_url, stock):
-    product = ProductModel.query.filter_by(id=product_id, is_deleted=False).first()
+    product = ProductModel.query.filter_by(id=product_id, is_deleted=False, is_deactivated=False).first()
     if product:
         try:
             product.name = name
@@ -188,7 +188,7 @@ def get_products_by_category(category, limit, offset):
     # products = ProductModel.query.filter_by(is_deleted=False, is_deactivated=False, category=category) \
     #     .order_by(ProductModel.stock.desc()).limit(limit).offset(offset).all()
 
-    total_count = ProductModel.query.filter_by(is_deleted=False, category=category).count()
+    total_count = ProductModel.query.filter_by(is_deleted=False,is_deactivated=False, category=category).count()
 
     return jsonify({
         "total_count": total_count,
@@ -205,7 +205,7 @@ def get_product_by_warranty(is_warranty, limit, offset):
     if not products:
         return jsonify({"error": "No products found"}), 404
     
-    total_count = ProductModel.query.filter_by(is_deleted=False, is_warranty=is_warranty).count()
+    total_count = ProductModel.query.filter_by(is_deleted=False,is_deactivated=False, is_warranty=is_warranty).count()
 
     return jsonify({
         "total_count": total_count,
