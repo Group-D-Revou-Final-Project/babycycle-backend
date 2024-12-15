@@ -137,7 +137,8 @@ def forgot_password(email):
         token = s.dumps(email, salt=os.getenv('RESET_PASSWORD_SALT'))
 
         # Create the reset URL (the link the user will click)
-        reset_url = url_for('users.reset_password_route', token=token, _external=True, _scheme='https')
+        # reset_url = url_for('users.reset_password_route', token=token, _external=True, _scheme='https')
+        reset_url = f"https://babycycle.my.id/reset-password/{token}"
 
         verification = user.verification
 
