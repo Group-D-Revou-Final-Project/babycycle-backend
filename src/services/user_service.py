@@ -29,8 +29,11 @@ def create_user_account(username, email, password):
    # Check if the user already exists
     user_email = UserModel.query.filter_by(email=email).first()
     user_name = UserModel.query.filter_by(username=username).first()
-    if user_email or user_name:
-        return jsonify({"error": "Account is already registered."}), 400
+    if user_name:
+        return jsonify({"error": "Username is already registered."}), 400
+
+    if user_email:
+        return jsonify({"error": "Email is already registered."}), 400
     
     # Create a new user
     hashed_password = generate_password_hash(password)
