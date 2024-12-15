@@ -63,7 +63,7 @@ def resend_verification_code(email):
     
     # Check if the user is already verified
     if user.is_verified:
-        return jsonify({"message": "User is already verified."}), 400
+        return jsonify({"error": "User is already verified."}), 400
 
     # Get the user's verification record
     verification = user.verification
