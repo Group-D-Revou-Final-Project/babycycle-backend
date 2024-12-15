@@ -223,6 +223,23 @@ FORGOT_PASSWORD = {
     'tags': ['Users'],
     'summary': 'Send password reset email',
     'description': 'Send a password reset link to the user\'s email.',
+    'parameters': [
+      {
+        'name': 'body',
+        'in': 'body',
+        'required': True,
+        'description': 'The user email input',
+        'schema': {
+          'type': 'object',
+          'properties': {
+            'email': {
+              'type': 'string',
+              'example': 'johndoe@example.com'
+            }
+          }
+        }
+      }  
+    ],
     'requestBody': {
         'content': {
             'application/json': {

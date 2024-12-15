@@ -144,10 +144,6 @@ def forgot_password(email):
         if verification is not None:
             verification.url_reset_password = reset_url
             db.session.commit()
-        
-        
-
-
         try:
             return Validator.send_forgot_password_email(user_email=email, url_link=reset_url)
         except Exception as e:
@@ -155,6 +151,19 @@ def forgot_password(email):
     else:
         return jsonify({"error": "This email is not registered."}), 404
     
+def get_reset_password_link(email):
+    user = UserModel.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    verification = user.verification
+
+    if verification is None:
+        return jsonify({"error": "Verification record not found."}), 404
+
+    return jsonify({"message": verification.url_reset_password}), 200
+
 def reset_password(token, new_password):
 
     s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
