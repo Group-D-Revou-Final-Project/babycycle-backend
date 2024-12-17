@@ -23,7 +23,8 @@ from src.swagger.products_swagger import (
     DELETE_PRODUCT,
     DEACTIVATE_PRODUCT,
     GET_PRODUCTS_BY_SORTING,
-    GET_PRODUCTS_BY_CATEGORY
+    GET_PRODUCTS_BY_CATEGORY,
+    GET_PRODUCTS_BY_WARRANTY
 )
 
 products_bp = Blueprint('products', __name__)
@@ -151,10 +152,12 @@ def get_products_by_category_route():
 
     return get_products_by_category(category=category, limit=limit, offset=offset)
 @products_bp.route('/products/warranty', methods=['GET'])
+@swag_from(GET_PRODUCTS_BY_WARRANTY)
 def get_products_by_warranty():
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
-    is_warranty = request.args.get('is_warranty', default=True, type=bool)
+    # is_warranty = request.args.get('is_warranty', default=True, type=bool)
+    is_warranty = request.args.get('is_warranty', default="true").lower() in ["true", "1", "yes"]
 
     return get_product_by_warranty(is_warranty=is_warranty, limit=limit, offset=offset)
 

@@ -29,8 +29,11 @@ def create_user_account(username, email, password):
    # Check if the user already exists
     user_email = UserModel.query.filter_by(email=email).first()
     user_name = UserModel.query.filter_by(username=username).first()
-    if user_email or user_name:
-        return jsonify({"error": "Account is already registered."}), 400
+    if user_name:
+        return jsonify({"error": "Username is already registered."}), 400
+
+    if user_email:
+        return jsonify({"error": "Email is already registered."}), 400
     
     # Create a new user
     hashed_password = generate_password_hash(password)
@@ -63,7 +66,7 @@ def resend_verification_code(email):
     
     # Check if the user is already verified
     if user.is_verified:
-        return jsonify({"message": "User is already verified."}), 400
+        return jsonify({"error": "User is already verified."}), 400
 
     # Get the user's verification record
     verification = user.verification
@@ -134,17 +137,14 @@ def forgot_password(email):
         token = s.dumps(email, salt=os.getenv('RESET_PASSWORD_SALT'))
 
         # Create the reset URL (the link the user will click)
-        reset_url = url_for('users.reset_password_route', token=token, _external=True, _scheme='https')
+        # reset_url = url_for('users.reset_password_route', token=token, _external=True, _scheme='https')
+        reset_url = f"https://babycycle.my.id/reset-password/{token}"
 
         verification = user.verification
 
         if verification is not None:
             verification.url_reset_password = reset_url
             db.session.commit()
-        
-        
-
-
         try:
             return Validator.send_forgot_password_email(user_email=email, url_link=reset_url)
         except Exception as e:
@@ -152,6 +152,19 @@ def forgot_password(email):
     else:
         return jsonify({"error": "This email is not registered."}), 404
     
+def get_reset_password_link(email):
+    user = UserModel.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    verification = user.verification
+
+    if verification is None:
+        return jsonify({"error": "Verification record not found."}), 404
+
+    return jsonify({"message": verification.url_reset_password}), 200
+
 def reset_password(token, new_password):
 
     s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
