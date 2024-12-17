@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
-from services.checkout_service import checkout_now
+from src.services.checkout_service import checkout_now
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from src.models.users_model import UserModel
 
 @register_blueprint.route('/checkout', methods=['POST'])
 @jwt_required()

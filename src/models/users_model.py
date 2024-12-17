@@ -28,3 +28,15 @@ class UserModel(db.Model):
     
     def __repr__(self):
         return f'<User {self.email}>'
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "address": self.address,
+            "phone": self.phone,
+            "is_seller": self.is_seller,
+            "is_verified": self.is_verified,
+        }

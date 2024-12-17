@@ -1,8 +1,9 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import jsonify
 from src.config.settings import db
 from src.models.orders_model import OrderModel
 from src.models.order_items_model import OrderItemModel
+from src.models.products_model import ProductModel
 
 def checkout_now(cart_items, payment_method):
     
@@ -24,12 +25,12 @@ def checkout_now(cart_items, payment_method):
     for seller_id, items in seller_groups.items():
         total_price = sum(item['total_price'] for item in items)
 
-        # Buat pesanan untuk seller ini
+        # Buat order untuk seller ini
         order = OrderModel(user_id=current_user_id, seller_id=seller_id, total_price=total_price, payment_method=payment_method, status='paid')
         db.session.add(order)
         db.session.commit()
 
-        # Tambahkan order items untuk setiap produk yang dibeli
+        # Bikin order items untuk setiap produk yang dibeli
         for item in items:
             order_item = OrderItemModel(
                 order_id=order.id,
@@ -51,7 +52,7 @@ def checkout_now(cart_items, payment_method):
         db.session.commit()  # Commit transaksi untuk seller ini
         orders.append(order)
 
-    # Kembalikan response dengan daftar pesanan untuk setiap seller
+   
     return jsonify({
         "message": "Checkout successful",
         "orders": [{"order_id": order.id, "total_price": order.total_price, "status": order.status} for order in orders]
