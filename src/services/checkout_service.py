@@ -5,11 +5,11 @@ from src.models.orders_model import OrderModel
 from src.models.order_items_model import OrderItemModel
 from src.models.products_model import ProductModel
 
-def checkout_now(cart_items, payment_method):
+def checkout_now(cart_items, payment_method, current_user_id):
     
     seller_groups = {}
     for item in cart_items:
-        product = Product.query.get(item['product_id'])
+        product = ProductModel.query.get(item['product_id'])
         if product:
             seller_id = product.seller_id
             if seller_id not in seller_groups:

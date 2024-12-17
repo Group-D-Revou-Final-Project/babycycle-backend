@@ -88,12 +88,16 @@ def create_app(settings_conf=None):
     from src.routers.carts import carts_bp
     from src.routers.auth import auth_bp
     from src.routers.discount import discount_bp
+    from src.routers.checkout import checkout_bp
+
 
     app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
     app.register_blueprint(products_bp, url_prefix=api_url)
     app.register_blueprint(carts_bp, url_prefix=api_url)
     app.register_blueprint(auth_bp, url_prefix=api_url + '/auth')
     app.register_blueprint(discount_bp, url_prefix=api_url + '/discount')
+    app.register_blueprint(checkout_bp, url_prefix=api_url)
+    
 
     
     # http://127.0.0.1:5000/api/v1/users/register

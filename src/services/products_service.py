@@ -1,7 +1,7 @@
 from flask import jsonify
 from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
-from src.models.discounts_model import DiscountModel
+# from src.models.discounts_model import DiscountModel
 
 from src.config.settings import db
 
