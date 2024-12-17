@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-from src.models.orders_model import OrderModel
-from src.models.products_model import ProductModel
+# from src.models.orders_model import OrderModel
+# from src.models.products_model import ProductModel
 
 
 class OrderItemModel(db.Model):
@@ -9,7 +9,7 @@ class OrderItemModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id', ondelete="CASCADE"), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))

@@ -1,15 +1,15 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-from src.models.discounts_model import DiscountModel
-from src.models.carts_model import CartModel
-from src.models.sellers_model import SellerModel
-from src.models.order_items_model import OrderItemModel 
+# from src.models.discounts_model import DiscountModel
+# from src.models.carts_model import CartModel
+# from src.models.sellers_model import SellerModel
+# from src.models.order_items_model import OrderItemModel 
 
 class ProductModel(db.Model):
     __tablename__ = 'products'
 
     id = db.Column(db.Integer, primary_key=True)  # Primary key
-    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id', ondelete="CASCADE"), nullable=False) 
+    seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id', ondelete="CASCADE"), nullable=True)
     name = db.Column(db.String(255), nullable=False)  # Product name
     price = db.Column(db.Float, nullable=False)  # Product price
     descriptions = db.Column(db.Text, nullable=True)  # Optional description

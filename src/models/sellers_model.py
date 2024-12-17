@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-from src.models.users_model import UserModel
-from src.models.products_model import ProductModel
-from src.models.orders_model import OrderModel
+# from src.models.users_model import UserModel
+# from src.models.products_model import ProductModel
+# from src.models.orders_model import OrderModel
 
 class SellerModel(db.Model):
     __tablename__ = 'sellers'
@@ -18,4 +18,4 @@ class SellerModel(db.Model):
 
     user = db.relationship('UserModel', back_populates='seller')
     products = db.relationship('ProductModel', back_populates='seller', cascade="all, delete-orphan")
-    orders = db.relationship('OrderModel', back_populates='seller')
+    order = db.relationship('OrderModel', back_populates='seller')

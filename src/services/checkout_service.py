@@ -4,6 +4,7 @@ from src.config.settings import db
 from src.models.orders_model import OrderModel
 from src.models.order_items_model import OrderItemModel
 from src.models.products_model import ProductModel
+from src.models.sellers_model import SellerModel
 
 def checkout_now(cart_items, payment_method, current_user_id):
     

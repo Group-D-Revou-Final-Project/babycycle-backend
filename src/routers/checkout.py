@@ -2,10 +2,17 @@ from flask import Blueprint, request, jsonify
 from src.services.checkout_service import checkout_now
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.models.users_model import UserModel
+from flasgger import swag_from
+
+from src.swagger.checkout_swagger import (
+    CHECKOUT
+)
+
 
 checkout_bp=Blueprint('checkout', __name__)
 @checkout_bp.route('/checkout', methods=['POST'])
 @jwt_required()
+@swag_from(CHECKOUT)
 def checkout():
     current_user_id = get_jwt_identity()  
     data = request.json
