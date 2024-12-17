@@ -29,7 +29,7 @@ class ProductModel(db.Model):
     # Use string references to avoid circular import issues
     discounts = db.relationship('DiscountModel', back_populates='product', cascade="all, delete-orphan")
     carts = db.relationship('CartModel', back_populates='product', cascade="all, delete-orphan")
-    seller = db.relationship('SellerModel', back_populates='product')
+    seller = db.relationship('SellerModel', back_populates='products')
     order_items = db.relationship('OrderItemModel', back_populates='product')
 
     def __repr__(self):
