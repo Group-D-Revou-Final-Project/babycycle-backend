@@ -7,7 +7,8 @@ from src.services.user_service import (
     forgot_password,
     reset_password,
     get_user_by_id,
-    get_all_users
+    get_all_users,
+    get_reset_password_link
     )
 from src.swagger.users_swagger import (
     REGISTER_USER,
@@ -53,7 +54,7 @@ def resend_verification():
     # Call the resend_verification_code function
     return resend_verification_code(email)
 @register_blueprint.route('/forgot-password', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 @swag_from(FORGOT_PASSWORD)
 def forgot_password_route():
     data = request.get_json()
@@ -70,11 +71,13 @@ def reset_password_route(token):
 
     return reset_password(token, new_password)
 
-# @register_blueprint.route('/me/<user_id>', methods=['GET'])
-# @swag_from(GET_USER_BY_ID)
-# def get_user_from_id_route(user_id):
-#     # Call the get_user_from_id function
-#     return get_user_by_id(user_id)
+@register_blueprint.route('/reset-password', methods=['POST'])
+def get_reset_password_link_route():
+    data = request.get_json()
+    email = data.get('email')
+
+    return get_reset_password_link(email)
+
 @register_blueprint.route('/me', methods=['GET'])
 @jwt_required()
 @swag_from(GET_USER_FROM_ID_ROUTE)
