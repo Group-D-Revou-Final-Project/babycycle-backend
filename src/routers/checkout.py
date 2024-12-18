@@ -91,7 +91,7 @@ def checkout_items():
         return jsonify({
             "message": "Order items processed",
             "results": results
-        }), 200
+        }), status_code
     except Exception as e:
         return jsonify({"error": f"An error occurred route: {str(e)}"}), 500
 
