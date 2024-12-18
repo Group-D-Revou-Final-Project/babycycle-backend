@@ -20,7 +20,7 @@ class CartModel(db.Model):
     # Relationship with UserModel
     user = db.relationship('UserModel', back_populates='carts')
 
-    cartscollection = db.relationship('CartsCollectionModel', back_populates='carts')   
+    cartscollection = db.relationship('CartsCollectionModel', back_populates='carts')
 
     def __repr__(self):
         return f"<Cart(user_id={self.user_id}, product_id={self.product_id}, quantity={self.quantity}, total_price={self.total_price})>"

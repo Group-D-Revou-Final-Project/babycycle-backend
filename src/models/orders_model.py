@@ -9,9 +9,9 @@ class OrderModel(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True)
+    checkout_id = db.Column(db.String(255),unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id'), nullable=True)
-    total_price = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), default='pending')
     payment_method = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flasgger import swag_from
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from src.services.carts_service import (
     get_all_carts,
@@ -30,11 +31,13 @@ def cart_route_get_all():
 
    
 @carts_bp.route('/carts', methods=['POST'])
+@jwt_required()
 @swag_from(CREATE_CARTS)
 def cart_route_post():
     try:
         # Parse the incoming JSON body
         data = request.get_json()
+        userID = get_jwt_identity()
 
         # Ensure data is an array
         if not isinstance(data, list):
@@ -56,7 +59,7 @@ def cart_route_post():
 
             # Create or update each cart item
             response = create_cart(
-                user_id=user_id,
+                user_id=userID,
                 product_id=product_id,
                 quantity=quantity,
                 total_price=total_price,

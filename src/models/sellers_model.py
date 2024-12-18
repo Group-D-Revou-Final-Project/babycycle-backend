@@ -1,9 +1,5 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-# from src.models.users_model import UserModel
-# from src.models.products_model import ProductModel
-# from src.models.orders_model import OrderModel
-
 class SellerModel(db.Model):
     __tablename__ = 'sellers'
     

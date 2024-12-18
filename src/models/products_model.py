@@ -1,9 +1,5 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-# from src.models.discounts_model import DiscountModel
-# from src.models.carts_model import CartModel
-# from src.models.sellers_model import SellerModel
-# from src.models.order_items_model import OrderItemModel 
 
 class ProductModel(db.Model):
     __tablename__ = 'products'
@@ -22,9 +18,6 @@ class ProductModel(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))  # Creation time
     updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))  # Update time
 
-    # Foreign key and relationship with UserModel
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
-    # user = db.relationship('UserModel', back_populates='products')  # Relationship back to UserModel
 
     # Use string references to avoid circular import issues
     discounts = db.relationship('DiscountModel', back_populates='product', cascade="all, delete-orphan")
