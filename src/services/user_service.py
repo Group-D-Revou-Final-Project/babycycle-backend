@@ -1,4 +1,4 @@
-from flask import jsonify, current_app, url_for
+from flask import jsonify, current_app
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from datetime import datetime, timezone
 from src.services.validator import Validator

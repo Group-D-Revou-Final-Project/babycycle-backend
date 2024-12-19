@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 
 from src.services.products_service import (
@@ -51,10 +52,13 @@ def get_product_by_id_route(product_id):
 
 @products_bp.route('/products', methods=['POST'])
 @swag_from(CREATE_PRODUCT)
+@jwt_required()
 def create_product_route():    
     try:
         # Get data from the request
         data = request.get_json()
+
+        userID = get_jwt_identity()
 
         # Extract fields
         name = data.get('name')
@@ -78,8 +82,8 @@ def create_product_route():
             category=category,
             is_warranty=is_warranty, 
             image_url=image_url,
-            stock=stock
-            # user_id=user_id
+            stock=stock,
+            user_id=userID
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500

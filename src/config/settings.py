@@ -27,7 +27,8 @@ def create_app(settings_conf=None):
 
     # Enable CORS
     # CORS configuration allowing only specific domain
-    CORS(app, origins=["https://api.babycycle.my.id", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000"], supports_credentials=True)
+    CORS(app, origins=["https://api.babycycle.my.id", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000", "https://babycycle.my.id", "https://www.babycycle.my.id"], supports_credentials=True)
+    # CORS(app, origins=["*"], supports_credentials=True)
     # Swagger configuration for securityDefinitions
     swagger_config = {
         "swagger": "2.0",
@@ -88,12 +89,23 @@ def create_app(settings_conf=None):
     from src.routers.carts import carts_bp
     from src.routers.auth import auth_bp
     from src.routers.discount import discount_bp
+    from src.routers.checkout import checkout_bp
+    from src.routers.review import review_bp
+    from src.routers.transactions import transactions_bp
+    from src.routers.seller import sellers_bp
+
 
     app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
     app.register_blueprint(products_bp, url_prefix=api_url)
     app.register_blueprint(carts_bp, url_prefix=api_url)
     app.register_blueprint(auth_bp, url_prefix=api_url + '/auth')
     app.register_blueprint(discount_bp, url_prefix=api_url + '/discount')
+    app.register_blueprint(checkout_bp, url_prefix=api_url)
+    app.register_blueprint(review_bp, url_prefix=api_url)
+    app.register_blueprint(transactions_bp, url_prefix=api_url)
+    app.register_blueprint(sellers_bp, url_prefix=api_url)
+
+    
 
     
     # http://127.0.0.1:5000/api/v1/users/register
