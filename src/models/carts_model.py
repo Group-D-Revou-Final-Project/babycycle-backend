@@ -9,7 +9,8 @@ class CartModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)  # User reference
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
-    user_address = db.Column(db.Text, nullable=False)
+    user_address = db.Column(db.Text, nullable=True)
+    name = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))  # Creation time
     updated_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))  # Update time
     
@@ -37,4 +38,5 @@ class CartModel(db.Model):
             "quantity": self.quantity,
             "total_price": self.total_price,
             "user_address": self.user_address,
+            "name": self.name
         }

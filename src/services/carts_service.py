@@ -13,9 +13,9 @@ def get_all_carts_collection():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def get_all_carts():
+def get_all_carts(user_id):
     try:
-        carts = CartModel.query.all()
+        carts = CartModel.query.filter_by(user_id=user_id).all()
         return jsonify([cart.to_dict() for cart in carts]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -30,7 +30,7 @@ def get_cart_by_id(cart_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def create_cart(user_id, product_id, quantity, total_price, user_address):
+def create_cart(user_id, product_id, quantity, total_price, user_address, name):
     try:
         # Check if the user is verified
         user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
@@ -54,6 +54,7 @@ def create_cart(user_id, product_id, quantity, total_price, user_address):
             current_cart.quantity = quantity
             current_cart.total_price = total_price
             current_cart.user_address = user_address
+            current_cart.name = name
             db.session.commit()
             return jsonify({"message": "Cart item updated successfully", "data": current_cart.to_dict()}), 200
 
@@ -63,7 +64,8 @@ def create_cart(user_id, product_id, quantity, total_price, user_address):
             product_id=product_id,
             quantity=quantity,
             total_price=total_price,
-            user_address=user_address
+            user_address=user_address,
+            name=name
         )
 
         # Add the new cart item to the database

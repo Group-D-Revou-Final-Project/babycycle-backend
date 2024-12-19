@@ -26,8 +26,10 @@ def cart_route_get_collections():
 
 @carts_bp.route('/carts', methods=['GET'])
 @swag_from(GET_CARTS)
+@jwt_required()
 def cart_route_get_all():
-    return get_all_carts()
+    userID = get_jwt_identity()
+    return get_all_carts(user_id=userID)
 
    
 @carts_bp.route('/carts', methods=['POST'])
@@ -47,23 +49,25 @@ def cart_route_post():
         results = []
         for item in data:
             product_id = item.get('product_id')
-            user_id = item.get('user_id')
+            user_id = userID
             quantity = item.get('quantity')
-            user_address = item.get('user_address')
+            user_address = item.get('user_address') or None
+            name = item.get('name')
             total_price = item.get('total_price')
 
             # Validate required fields
-            if not all([product_id, user_id, quantity, user_address, total_price]):
+            if not all([product_id, user_id, quantity, name, total_price]):
                 results.append({"error": "Missing required fields in cart item", "item": item})
                 continue
 
             # Create or update each cart item
             response = create_cart(
-                user_id=userID,
+                user_id=user_id,
                 product_id=product_id,
                 quantity=quantity,
                 total_price=total_price,
-                user_address=user_address
+                user_address=user_address,
+                name=name
             )
 
             # Check the response status code
