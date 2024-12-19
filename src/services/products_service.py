@@ -2,6 +2,7 @@ from flask import jsonify
 from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
 # from src.models.discounts_model import DiscountModel
+from src.models.sellers_model import SellerModel
 
 from src.config.settings import db
 
@@ -44,8 +45,16 @@ def get_product_by_id(product_id):
         return jsonify({"error": "Product not found"}), 404
     
 
-def create_product(name, price, descriptions, category, is_warranty, image_url, stock):
+def create_product(name, price, descriptions, category, is_warranty, image_url, stock, user_id):
     try:
+        user = UserModel.query.filter_by(id=user_id, is_seller=True).first()
+        if user is None:
+            return jsonify({"error": "User Seller not found"}), 404
+        
+        seller = SellerModel.query.filter_by(user_id=user_id).first()
+        if seller is None:
+            return jsonify({"error": "Seller not found"}), 404
+        
         # Create a new ProductModel instance
         new_product = ProductModel(
             name=name,
@@ -55,7 +64,7 @@ def create_product(name, price, descriptions, category, is_warranty, image_url, 
             is_warranty=is_warranty,
             image_url=image_url,
             stock=stock,
-            # user_id=user_id
+            seller_id=seller.id
         )
         
         # Add to database

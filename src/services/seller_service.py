@@ -1,7 +1,9 @@
-from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import jsonify
 from src.models.users_model import UserModel
 from src.models.sellers_model import SellerModel
+from src.models.products_model import ProductModel
+from src.models.review_model import ReviewModel
+from src.models.discounts_model import DiscountModel
 from src.config.settings import db
 
 
@@ -58,3 +60,44 @@ def delete_seller(seller_id):
         return jsonify({"message": "Seller deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+def get_products_by_seller(user_id):
+
+    seller = SellerModel.query.filter_by(user_id=user_id).first()
+    if seller is None:
+        return jsonify({"error": "Seller not found"}), 404
+
+    seller_id = seller.id
+
+
+    results = db.session.query(
+        ProductModel.name.label("name"),
+        ReviewModel.rating.label("rating"),
+        ProductModel.price.label("price"),
+        DiscountModel.discount_percentage.label("discount_percentage"),
+        ProductModel.stock.label("stock"),
+        ProductModel.seller_id.label("seller_id")
+    ).outerjoin(
+        ReviewModel, ReviewModel.product_id == ProductModel.id
+    ).outerjoin(
+        DiscountModel, DiscountModel.product_id == ProductModel.id
+    ).filter(
+        ProductModel.seller_id == seller_id
+    ).all()
+    if not results:
+        return jsonify({"error": "No products found for the specified seller"}), 404
+
+    # Format the results as a list of dictionaries
+    formatted_results = [
+        {
+            "name": result.name,
+            "rating": result.rating,
+            "price": result.price,
+            "discount_percentage": result.discount_percentage,
+            "stock": result.stock,
+            "seller_id": result.seller_id
+        }
+        for result in results
+    ]
+
+    return jsonify(formatted_results), 200

@@ -7,7 +7,8 @@ from src.services.seller_service import (
     get_seller_by_id,
     create_seller,
     update_seller,
-    delete_seller
+    delete_seller,
+    get_products_by_seller
 )
 
 
@@ -48,3 +49,9 @@ def update_seller_route(seller_id):
 @jwt_required()
 def delete_seller_route(seller_id):
     return delete_seller(seller_id)
+
+@sellers_bp.route('/sellers/products', methods=['GET'])
+@jwt_required()
+def get_products_by_seller_route():
+    user_id = get_jwt_identity()
+    return get_products_by_seller(user_id)
