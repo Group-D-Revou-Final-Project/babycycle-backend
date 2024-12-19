@@ -24,6 +24,7 @@ class ProductModel(db.Model):
     carts = db.relationship('CartModel', back_populates='product', cascade="all, delete-orphan")
     seller = db.relationship('SellerModel', back_populates='products')
     order_items = db.relationship('OrderItemModel', back_populates='product')
+    reviews = db.relationship('ReviewModel', back_populates='product', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Product(name={self.name}, price={self.price}, category={self.category})>'

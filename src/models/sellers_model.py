@@ -15,3 +15,15 @@ class SellerModel(db.Model):
     user = db.relationship('UserModel', back_populates='seller')
     products = db.relationship('ProductModel', back_populates='seller', cascade="all, delete-orphan")
     order = db.relationship('OrderModel', back_populates='seller')
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'name': self.name,
+            'address': self.address,
+            'contact': self.contact,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }

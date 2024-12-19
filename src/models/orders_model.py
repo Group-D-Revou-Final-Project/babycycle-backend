@@ -23,3 +23,15 @@ class OrderModel(db.Model):
 
     def __repr__(self):
         return f'<Order {self.id}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'checkout_id': self.checkout_id,
+            'user_id': self.user_id,
+            'seller_id': self.seller_id,
+            'status': self.status,
+            'payment_method': self.payment_method,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }

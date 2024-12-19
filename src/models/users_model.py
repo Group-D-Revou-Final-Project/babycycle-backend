@@ -25,6 +25,8 @@ class UserModel(db.Model):
     # products = db.relationship('ProductModel', back_populates='user', cascade="all, delete-orphan")  # One-to-many relation with Product
     carts = db.relationship('CartModel', back_populates='user', cascade="all, delete-orphan")
     orders = db.relationship('OrderModel', back_populates='user')
+
+    reviews = db.relationship('ReviewModel', back_populates='user', cascade="all, delete-orphan")
     
     def __repr__(self):
         return f'<User {self.email}>'
