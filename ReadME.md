@@ -38,7 +38,7 @@ This repository contains the backend API for the babycycle platform, developed t
 ## Installation and Setup
 
 ### Prerequisites
-- Python (>= 3.8)
+- Python (>= 3.12)
 - Docker
 - Poetry
 - PostgreSQL
