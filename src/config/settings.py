@@ -7,6 +7,11 @@ from flask_seeder import FlaskSeeder
 import os
 from dotenv import load_dotenv
 from flasgger import Swagger
+# from flask_login import LoginManager
+from flask_jwt_extended import JWTManager
+
+from flask_cors import CORS
+
 
 # Load environment variables
 load_dotenv()
@@ -18,12 +23,12 @@ seeder = FlaskSeeder()
 
 def create_app(settings_conf=None):
     """Application factory to create a Flask app instance."""
-    # template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'templates')
-    # static_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
-
-    # app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
     app = Flask(__name__)
 
+    # Enable CORS
+    # CORS configuration allowing only specific domain
+    CORS(app, origins=["https://api.babycycle.my.id", "http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000", "http://127.0.0.1:5000", "https://babycycle.my.id", "https://www.babycycle.my.id"], supports_credentials=True)
+    # CORS(app, origins=["*"], supports_credentials=True)
     # Swagger configuration for securityDefinitions
     swagger_config = {
         "swagger": "2.0",
@@ -64,8 +69,12 @@ def create_app(settings_conf=None):
     os.environ.setdefault("FLASK_SETTINGS_MODULE", "src.config.prod")
     conf = settings_conf or os.getenv("FLASK_SETTINGS_MODULE")
     app.config.from_object(conf)
-    app.config['DEBUG'] = True
-    app.config['SECRET_KEY'] = "ThisIsASecretKey"
+
+    app.config['DEBUG'] = os.getenv('DEBUG', 'True') == 'True'  # Convert from string to boolean
+    app.config['SECRET_KEY'] = os.getenv('KEY_SECRET')
+
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY') 
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600 
 
 
     # Initialize the app with extensions
@@ -73,51 +82,35 @@ def create_app(settings_conf=None):
     migrate.init_app(app, db)
     seeder.init_app(app, db)
 
-    # from src.router.Login import LoginView
-    # from src.router.Logout import LogoutView
-    # # from src.router.UserFetch import UserFetchView
-    # from src.router.User import UserView
-    # from src.router.Account import AccountView
-    # from src.router.Transaction import TransactionView
-    # # from src.router.Review import ReviewView
-    # # from src.router.TestQuery import TestQueryView
-    # from src.models.BankingModel import User
-    # from flask_login import LoginManager
-
-    login_manager = LoginManager(app)
-    # login_manager.login_view = "/"  # Set the login view endpoint name
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(int(user_id))
+    # API routes
+    api_url='/api/v1'
+    from src.routers.register import register_blueprint
+    from src.routers.products import products_bp
+    from src.routers.carts import carts_bp
+    from src.routers.auth import auth_bp
+    from src.routers.discount import discount_bp
+    from src.routers.checkout import checkout_bp
+    from src.routers.review import review_bp
+    from src.routers.transactions import transactions_bp
+    from src.routers.seller import sellers_bp
+    from src.routers.search import search_bp
 
 
-    # login_view = LoginView.as_view('login_view')
-    # app.add_url_rule('/auth/v1/login', view_func=login_view, methods=['GET','POST'])
-    # app.add_url_rule('/auth/v1/login/<int:user_id>', view_func=login_view, methods=['GET'])
-
-    # logout_view = LogoutView.as_view('logout_view')
-    # app.add_url_rule('/auth/v1/logout', view_func=logout_view, methods=['GET','POST'])
-    
-
-    # user_view = UserView.as_view('user_view')
-    # app.add_url_rule('/v1/user', view_func=user_view, methods=['POST'])
-    # app.add_url_rule('/v1/user/me', view_func=user_view, methods=['GET','PUT'])
-
-    # account_view = AccountView.as_view('account_view')
-    # app.add_url_rule('/v1/accounts', view_func=account_view, methods=['POST','GET'])
-    # app.add_url_rule('/v1/accounts/<int:account_id>', view_func=account_view, methods=['GET','PUT','DELETE'])
-    # # app.add_url_rule('/v1/account/me', view_func=account_view, methods=['GET'])
-
-    # transaction_view = TransactionView.as_view('transaction_view')
-    # app.add_url_rule('/v1/transactions', view_func=transaction_view, methods=['POST','GET'])
-    # app.add_url_rule('/v1/transactions/<int:transaction_id>', view_func=transaction_view, methods=['GET'])
-
+    app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
+    app.register_blueprint(products_bp, url_prefix=api_url)
+    app.register_blueprint(carts_bp, url_prefix=api_url)
+    app.register_blueprint(auth_bp, url_prefix=api_url + '/auth')
+    app.register_blueprint(discount_bp, url_prefix=api_url + '/discount')
+    app.register_blueprint(checkout_bp, url_prefix=api_url)
+    app.register_blueprint(review_bp, url_prefix=api_url)
+    app.register_blueprint(transactions_bp, url_prefix=api_url)
+    app.register_blueprint(sellers_bp, url_prefix=api_url)
+    app.register_blueprint(search_bp, url_prefix=api_url)
 
     
 
-    # test_query_view = TestQueryView.as_view('test_query_view')
-    # app.add_url_rule('/v2/getquery', view_func=test_query_view, methods=['GET'])
+    
+    # http://127.0.0.1:5000/api/v1/users/register
     
     @app.route('/')
     def hello_from_api():
@@ -127,5 +120,7 @@ def create_app(settings_conf=None):
     def create_all_db():
         db.create_all()
         return jsonify({'message': 'Database created successfully'})
+
+    jwt = JWTManager(app)
     
     return app
