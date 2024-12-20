@@ -22,6 +22,7 @@ This repository contains the backend API for the babycycle platform, developed t
 - **Database:** PostgreSQL (Supabase)
 - **Dependency Management:** Poetry
 - **Containerization:** Docker
+- **SMTP:** Mailtrap
 
 ---
 
@@ -59,21 +60,27 @@ This repository contains the backend API for the babycycle platform, developed t
    Create a `.env` file in the root directory and configure the following:
    ```env
    FLASK_ENV=development
-   DATABASE_URL=your_postgres_database_url
-   SECRET_KEY=your_secret_key
+   DB_URI_PROD=your_postgres_database_url
+   SENDER_EMAIL=sender_mail_for_notification
+   KEY_SECRET=your_secret_key
    RESET_PASSWORD_SALT=your_reset_password_salt
+   JWT_SECRET=your_jwt_secret_key
+   SMTP_PASSWORD="<smtp_password_from_mailtrap>"
+   SMTP_USER="<smpt_user>"
    ```
 
 4. **Run Database Migrations:**
    ```bash
+   flask db init
+   flask db migrate -m "Initial Migrations"
    flask db upgrade
    ```
 
 5. **Start the Development Server:**
    ```bash
-   flask run
+   hypercorn app:app --bind 127.0.0.1:5100 --reload
    ```
-   The API will be available at `http://127.0.0.1:5000`.
+   The API will be available at `http://127.0.0.1:5100`.
 
 ---
 
@@ -81,27 +88,52 @@ This repository contains the backend API for the babycycle platform, developed t
 
 1. **Build the Docker Image:**
    ```bash
-   docker build -t babycycle-backend .
+   docker build . -t docker.io/<username>/<image_name>:<tag>
    ```
 
-2. **Run the Docker Container:**
+2. Create docker-compose.yaml on the parent directory
+    ```bash
+    services:
+        app-service:
+            image: "docker.io/<username>/<image_name>:<tag>"
+            pull_policy: always
+            container_name: "flask_app_container"
+            environment:
+            DB_URI_PROD: <URI_CONNECTION>
+            SENDER_EMAIL: <email_sender>
+            SMTP_PASSWORD: <smtp_password>
+            SMTP_USER: <smtp_user>
+            KEY_SECRET: <key_secret>
+            JWT_SECRET: 'your_jwt_secret_key'
+            RESET_PASSWORD_SALT: 'your_reset_password_salt'
+
+            
+            ports:
+            - "5100:5000"
+            volumes:
+            - app_data:/app
+
+            pull_policy: always
+            networks:
+            - apps_network
+
+    volumes:
+    app_data:
+
+    networks:
+    apps_network:
+    ```
+
+2. **Run the Docker Container from the Compose File:**
    ```bash
-   docker run -p 5000:5000 babycycle-backend
+   docker-compose -f docker-compose-babycycle.yaml up -d
    ```
 
 3. **Access the API:**
-   Open `http://127.0.0.1:5000` in your browser.
+   Open `https://<your_domain>/apidocs` in your browser.
 
 ---
 
-## Testing
-
-Run unit tests using the following command:
-```bash
-pytest
-```
-
----
 
 ## API Documentation
 Interactive API documentation is available at:
