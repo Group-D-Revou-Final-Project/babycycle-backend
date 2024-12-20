@@ -157,4 +157,3 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## Contact
 For any queries or support, please contact the development team via the repository's issue tracker.
-
