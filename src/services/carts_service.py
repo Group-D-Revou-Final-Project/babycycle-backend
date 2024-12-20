@@ -13,12 +13,62 @@ def get_all_carts_collection():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# def get_all_carts(user_id):
+#     try:
+#         carts = CartModel.query.filter_by(user_id=user_id).all()
+#         return jsonify([cart.to_dict() for cart in carts]), 200
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+    
 def get_all_carts(user_id):
     try:
-        carts = CartModel.query.filter_by(user_id=user_id).all()
-        return jsonify([cart.to_dict() for cart in carts]), 200
+        # Get user_id dynamically from query parameters
+     
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
+        # SQLAlchemy query
+        query = (
+            db.session.query(
+                CartModel.id,
+                CartModel.product_id,
+                CartModel.user_id,
+                CartModel.quantity,
+                CartModel.total_price,
+                CartModel.name,
+                ProductModel.price
+            )
+            .join(ProductModel, ProductModel.id == CartModel.product_id, isouter=True)  # LEFT JOIN
+            .filter(CartModel.user_id == user_id)  # WHERE condition
+        )
+
+        # Fetch results
+        results = query.all()
+
+        # Check if results are empty
+        if not results:
+            return jsonify({"message": "No carts found for the given user"}), 404
+
+        # Format the results as a list of dictionaries
+        response_data = [
+            {
+                "id": row[0],
+                "product_id": row[1],
+                "user_id": row[2],
+                "quantity": row[3],
+                "total_price": float(row[4]) if row[4] else None,  # Convert Decimal to float
+                "name": row[5],
+                "price": float(row[6]) if row[6] else None  # Convert Decimal to float
+            }
+            for row in results
+        ]
+
+        # Return JSON response
+        return jsonify(response_data), 200
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Handle any other errors
+        return jsonify({"error": "An unexpected error occurred", "details": str(e)}), 500
     
 def get_cart_by_id(cart_id):
     try:
@@ -100,6 +150,17 @@ def delete_cart(cart_id):
             return jsonify({"message": "Cart deleted successfully"}), 200
         else:
             return jsonify({"error": "Cart not found"}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+def clear_cart(user_id):
+    try:
+        carts = CartModel.query.filter_by(user_id=user_id).all()
+        for cart in carts:
+            db.session.delete(cart)
+        db.session.commit()
+        return jsonify({"message": "Cart cleared successfully"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500

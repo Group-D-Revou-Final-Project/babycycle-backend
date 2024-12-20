@@ -5,7 +5,9 @@ from src.config.settings import db
 from src.models.orders_model import OrderModel
 from src.models.order_items_model import OrderItemModel
 from src.models.products_model import ProductModel
-from src.models.sellers_model import SellerModel
+# from src.models.sellers_model import SellerModel
+from src.models.carts_model import CartModel
+
 
 def checkout_now(cart_items, payment_method, current_user_id):
     
@@ -131,3 +133,32 @@ def create_order_items(user_id, product_id, quantity, total_price, user_address,
     except Exception as e:
         db.session.rollback()
         return {"error": f"An error occurred function: {str(e)}"}, 500
+    
+def checkout_validate(user_id):
+    # Retrieve all carts for the given user
+    carts = CartModel.query.filter_by(user_id=user_id).all()
+
+    if not carts:
+        return jsonify({"error": "No items in the cart"}), 404
+
+    # Retrieve all products related to the cart
+    product_ids = [cart.product_id for cart in carts]
+    products = ProductModel.query.filter(ProductModel.id.in_(product_ids)).all()
+
+    # Create a mapping of product_id to stock for quick lookup
+    product_stock_map = {product.id: product.stock for product in products}
+
+    # Validate the cart quantities against product stocks
+    for cart in carts:
+        product_stock = product_stock_map.get(cart.product_id, 0)
+        if cart.quantity > product_stock:
+            return jsonify({
+                "error": "Insufficient stock",
+                "product_id": cart.product_id,
+                "requested_quantity": cart.quantity,
+                "available_stock": product_stock,
+                "product_name": cart.product.name
+            }), 400
+
+    return jsonify({"message": "Validation successful"}), 200
+   

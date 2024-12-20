@@ -8,7 +8,8 @@ from src.services.carts_service import (
     create_cart,
     update_cart,
     delete_cart,
-    get_all_carts_collection
+    get_all_carts_collection,
+    clear_cart
 )
 from src.swagger.carts_swagger import (
     DELETE_CARTS,
@@ -104,5 +105,12 @@ def cart_route_update(cart_id):
     return update_cart(cart_id=cart_id, quantity=quantity, total_price=total_price)
 @carts_bp.route('/carts/<int:cart_id>', methods=['DELETE'])
 @swag_from(DELETE_CARTS)
+@jwt_required()
 def cart_route_delete(cart_id):
     return delete_cart(cart_id=cart_id)
+
+@carts_bp.route('/carts/clear', methods=['DELETE'])
+@jwt_required()
+def cart_route_clear():
+    userID = get_jwt_identity()
+    return clear_cart(user_id=userID)

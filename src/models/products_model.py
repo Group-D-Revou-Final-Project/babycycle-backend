@@ -27,7 +27,7 @@ class ProductModel(db.Model):
     reviews = db.relationship('ReviewModel', back_populates='product', cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f'<Product(name={self.name}, price={self.price}, category={self.category})>'
+        return f'<Product(name={self.name}, price={self.price}, category={self.category}), stock={self.stock}>'
 
     def to_dict(self):
         return {
