@@ -42,8 +42,9 @@ def checkout_now_route():
     # total_price = data.get('total_price')
     payment_method = data.get('payment_method')
     checkout_id = data.get('checkout_id')
+    product_id = data.get('product_id')
 
-    return checkout_item_now(checkout_id=checkout_id, payment_method=payment_method, current_user_id=current_user_id)
+    return checkout_item_now(checkout_id=checkout_id, payment_method=payment_method, current_user_id=current_user_id, product_id=product_id)
 
 @checkout_bp.route('/checkout/items', methods=['POST'])
 @jwt_required()
