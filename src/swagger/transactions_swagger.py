@@ -152,3 +152,47 @@ DELETE_TRANSACTION = {
         }
     }
 }
+GET_ALL_TRANSACTIONS_BY_SELLER = {
+    'tags': ['Transactions'],
+    'summary': 'Retrieve transaction statistics for a seller',
+    'description': 'Fetches total transactions, products listed, and products sold for a seller based on the authenticated user.',
+    'parameters': [
+        {
+            'name': 'Authorization',
+            'in': 'header',
+            'required': True,
+            'description': 'Bearer token for authentication',
+            'schema': {
+                'type': 'string',
+                'example': 'Bearer <your-token>'
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'Transaction statistics for the seller',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'total_transactions': 25,
+                        'product_listed': 10,
+                        'products_sold': 100
+                    }
+                }
+            }
+        },
+        404: {
+            'description': 'Seller not found',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'error': 'Seller not found'
+                    }
+                }
+            }
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}
