@@ -13,7 +13,8 @@ from src.services.products_service import (
     user_has_product,
     get_products_by_sorting,
     get_products_by_category,
-    get_product_by_warranty
+    get_product_by_warranty,
+    get_product_with_count
 )
 
 from src.swagger.products_swagger import (
@@ -25,7 +26,8 @@ from src.swagger.products_swagger import (
     DEACTIVATE_PRODUCT,
     GET_PRODUCTS_BY_SORTING,
     GET_PRODUCTS_BY_CATEGORY,
-    GET_PRODUCTS_BY_WARRANTY
+    GET_PRODUCTS_BY_WARRANTY,
+    GET_PRODUCTS_WITH_COUNT
 )
 
 products_bp = Blueprint('products', __name__)
@@ -164,4 +166,14 @@ def get_products_by_warranty():
     is_warranty = request.args.get('is_warranty', default="true").lower() in ["true", "1", "yes"]
 
     return get_product_by_warranty(is_warranty=is_warranty, limit=limit, offset=offset)
+
+@products_bp.route('/products/with/count', methods=['GET'])
+@swag_from(GET_PRODUCTS_WITH_COUNT)
+def get_products_with_count_route():
+    limit = request.args.get('limit', default=0, type=int)
+    offset = request.args.get('offset', default=0, type=int)
+    category = request.args.get('category', type=str)
+    is_warranty = request.args.get('is_warranty', default="false").lower() in ["true", "1", "yes"]
+
+    return get_product_with_count(limit=limit, offset=offset, category=category, is_warranty=is_warranty)
 

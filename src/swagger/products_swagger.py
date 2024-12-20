@@ -529,3 +529,90 @@ GET_PRODUCTS_BY_WARRANTY = {
         }
     }
 }
+GET_PRODUCTS_WITH_COUNT = {
+    'tags': ['Products'],
+    'summary': 'Retrieve products with count and filtering options',
+    'description': 'Fetches a list of products with total count, supports pagination, filtering by category, and warranty status.',
+    'parameters': [
+        {
+            'name': 'limit',
+            'in': 'query',
+            'required': False,
+            'description': 'The maximum number of products to return.',
+            'schema': {
+                'type': 'integer',
+                'default': 0
+            }
+        },
+        {
+            'name': 'offset',
+            'in': 'query',
+            'required': False,
+            'description': 'The number of products to skip before starting to collect the result set.',
+            'schema': {
+                'type': 'integer',
+                'default': 0
+            }
+        },
+        {
+            'name': 'category',
+            'in': 'query',
+            'required': False,
+            'description': 'The category to filter products by.',
+            'schema': {
+                'type': 'string',
+                'example': 'Electronics'
+            }
+        },
+        {
+            'name': 'is_warranty',
+            'in': 'query',
+            'required': False,
+            'description': 'Filter products by warranty status (true or false).',
+            'schema': {
+                'type': 'boolean',
+                'default': False
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'List of products with count',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'total_count': 50,
+                        'products': [
+                            {
+                                'id': 1,
+                                'name': 'Laptop',
+                                'price': 1200.00,
+                                'description': 'A high-performance laptop',
+                                'category': 'Electronics',
+                                'stock': 5,
+                                'is_warranty': True,
+                                'image_url': 'http://example.com/laptop.jpg'
+                            },
+                            {
+                                'id': 2,
+                                'name': 'Smartphone',
+                                'price': 800.00,
+                                'description': 'A sleek smartphone',
+                                'category': 'Electronics',
+                                'stock': 10,
+                                'is_warranty': False,
+                                'image_url': 'http://example.com/smartphone.jpg'
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Invalid query parameters'
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}

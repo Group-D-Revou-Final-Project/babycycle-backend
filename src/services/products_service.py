@@ -220,3 +220,36 @@ def get_product_by_warranty(is_warranty, limit, offset):
         "total_count": total_count,
         "data": [product.to_dict() for product in products]
     }), 200
+    
+
+
+def get_product_with_count(limit, offset, category, is_warranty):
+    # Validate limit and offset
+    if limit < 0 or offset < 0:
+        return jsonify({"error": "Limit and offset must be non-negative"}), 400
+
+    # Base query filters
+    filters = {
+        "is_deleted": False,
+        "is_deactivated": False,
+        "category": category if category != "others" else None,
+        "is_warranty": is_warranty
+    }
+    # Remove None filters
+    filters = {key: value for key, value in filters.items() if value is not None}
+
+    # Query with limit and offset
+    products_query = ProductModel.query.filter_by(**filters).order_by(ProductModel.stock.desc())
+    total_count = products_query.count()
+
+    # Apply limit and offset if applicable
+    if limit > 0:
+        products = products_query.limit(limit).offset(offset).all()
+    else:
+        products = products_query.all()
+
+    # Return results
+    return jsonify({
+        "total_count": total_count,
+        "data": [product.to_dict() for product in products]
+    }), 200
