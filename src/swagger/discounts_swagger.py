@@ -69,3 +69,76 @@ GET_CALCULATED_DISCOUNT = {
         }
     }
 }
+CREATE_DISCOUNT = {
+    'tags': ['Discounts'],
+    'summary': 'Create a new discount',
+    'description': 'Allows the creation of a discount for a specific product.',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'description': 'Details of the discount to create.',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'product_id': {
+                        'type': 'integer',
+                        'description': 'The ID of the product the discount applies to.',
+                        'example': 1
+                    },
+                    'discount_percentage': {
+                        'type': 'number',
+                        'format': 'float',
+                        'description': 'The percentage of the discount.',
+                        'example': 15.5
+                    },
+                    'start_date': {
+                        'type': 'string',
+                        'format': 'date-time',
+                        'description': 'The start date of the discount.',
+                        'example': '2024-01-01T00:00:00Z'
+                    },
+                    'end_date': {
+                        'type': 'string',
+                        'format': 'date-time',
+                        'description': 'The end date of the discount.',
+                        'example': '2024-01-15T23:59:59Z'
+                    },
+                    'is_active': {
+                        'type': 'boolean',
+                        'description': 'Indicates if the discount is active.',
+                        'example': True
+                    }
+                },
+                'required': ['product_id', 'discount_percentage', 'start_date', 'end_date', 'is_active']
+            }
+        }
+    ],
+    'responses': {
+        201: {
+            'description': 'Discount created successfully',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'message': 'Discount created successfully',
+                        'discount_id': 12345
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Invalid input data',
+            'content': {
+                'application/json': {
+                    'example': {
+                        'error': 'Invalid product ID or missing required fields.'
+                    }
+                }
+            }
+        },
+        500: {
+            'description': 'Internal server error'
+        }
+    }
+}

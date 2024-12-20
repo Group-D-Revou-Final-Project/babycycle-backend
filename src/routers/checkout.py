@@ -6,7 +6,8 @@ from flasgger import swag_from
 from src.services.checkout_service import (
     checkout_now,
     checkout_item_now,
-    create_order_items
+    create_order_items,
+    checkout_validate
 )
 from src.swagger.checkout_swagger import (
     CHECKOUT,
@@ -95,3 +96,11 @@ def checkout_items():
     except Exception as e:
         return jsonify({"error": f"An error occurred route: {str(e)}"}), 500
 
+@checkout_bp.route('/checkout/validate', methods=['GET'])
+@jwt_required()
+def checkout_validate_route():
+    userID = get_jwt_identity()
+    return checkout_validate(user_id=userID)
+
+    
+    

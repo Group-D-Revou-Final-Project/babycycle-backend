@@ -8,7 +8,8 @@ from src.services.carts_service import (
     create_cart,
     update_cart,
     delete_cart,
-    get_all_carts_collection
+    get_all_carts_collection,
+    clear_cart
 )
 from src.swagger.carts_swagger import (
     DELETE_CARTS,
@@ -26,8 +27,10 @@ def cart_route_get_collections():
 
 @carts_bp.route('/carts', methods=['GET'])
 @swag_from(GET_CARTS)
+@jwt_required()
 def cart_route_get_all():
-    return get_all_carts()
+    userID = get_jwt_identity()
+    return get_all_carts(user_id=userID)
 
    
 @carts_bp.route('/carts', methods=['POST'])
@@ -47,23 +50,25 @@ def cart_route_post():
         results = []
         for item in data:
             product_id = item.get('product_id')
-            user_id = item.get('user_id')
+            user_id = userID
             quantity = item.get('quantity')
-            user_address = item.get('user_address')
+            user_address = item.get('user_address') or None
+            name = item.get('name')
             total_price = item.get('total_price')
 
             # Validate required fields
-            if not all([product_id, user_id, quantity, user_address, total_price]):
+            if not all([product_id, user_id, quantity, name, total_price]):
                 results.append({"error": "Missing required fields in cart item", "item": item})
                 continue
 
             # Create or update each cart item
             response = create_cart(
-                user_id=userID,
+                user_id=user_id,
                 product_id=product_id,
                 quantity=quantity,
                 total_price=total_price,
-                user_address=user_address
+                user_address=user_address,
+                name=name
             )
 
             # Check the response status code
@@ -100,5 +105,12 @@ def cart_route_update(cart_id):
     return update_cart(cart_id=cart_id, quantity=quantity, total_price=total_price)
 @carts_bp.route('/carts/<int:cart_id>', methods=['DELETE'])
 @swag_from(DELETE_CARTS)
+@jwt_required()
 def cart_route_delete(cart_id):
     return delete_cart(cart_id=cart_id)
+
+@carts_bp.route('/carts/clear', methods=['DELETE'])
+@jwt_required()
+def cart_route_clear():
+    userID = get_jwt_identity()
+    return clear_cart(user_id=userID)
