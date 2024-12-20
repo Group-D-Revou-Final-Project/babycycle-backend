@@ -3,6 +3,7 @@ from flask import jsonify
 from src.models.review_model import ReviewModel
 from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
+from src.models.order_items_model import OrderItemModel
 from src.config.settings import db
 
 
@@ -13,6 +14,7 @@ def add_review(user_id, product_id, rating, review):
         user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
         if not user:
             return jsonify({"error": "User not found or not verified"}), 404
+        
 
         # Check if the product exists and is available
         product = ProductModel.query.filter_by(id=product_id, is_deleted=False, is_deactivated=False).first()
@@ -22,8 +24,15 @@ def add_review(user_id, product_id, rating, review):
         # Create a new review
         new_review = ReviewModel(user_id=user_id, product_id=product_id, rating=rating, review=review)
         db.session.add(new_review)
-        db.session.commit()
 
+        item_transcations = OrderItemModel.query.filter_by(product_id=product_id).first()
+
+        if not item_transcations:
+            return jsonify({"error": "No transactions found for the user"}), 404
+        
+        item_transcations.is_reviewed = True
+
+        db.session.commit()
         return jsonify({"message": "Review added successfully", "data": new_review.to_dict()}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500

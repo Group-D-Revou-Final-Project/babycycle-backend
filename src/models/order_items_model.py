@@ -18,6 +18,8 @@ class OrderItemModel(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     user_address = db.Column(db.Text, nullable=False)
+    is_reviewed = db.Column(db.Boolean, nullable=True, default=False)
+
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
     
@@ -35,5 +37,6 @@ class OrderItemModel(db.Model):
             "quantity": self.quantity,
             "total_price": self.total_price,
             "user_address": self.user_address,
-            "checkout_order_id": self.checkout_order_id
+            "checkout_order_id": self.checkout_order_id,
+            "is_reviewed": self.is_reviewed
         }

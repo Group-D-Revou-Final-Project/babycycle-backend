@@ -14,7 +14,6 @@ search_bp = Blueprint('search', __name__)
 
 @search_bp.route('/search/products', methods=['GET'])
 @swag_from(SEARCH_PRODUCTS)
-@jwt_required()
 def search_route():
     query = request.args.get('query')
     limit = request.args.get('limit', default=10, type=int)

@@ -62,20 +62,23 @@ def checkout_now(cart_items, payment_method, current_user_id):
         "orders": [{"order_id": order.id, "total_price": order.total_price, "status": order.status} for order in orders]
     })
 
-def checkout_item_now(checkout_id, payment_method, current_user_id):
+def checkout_item_now(checkout_id, payment_method, current_user_id, product_id):
     order = OrderModel.query.filter_by(checkout_id=checkout_id).first()
+    seller_product = ProductModel.query.filter_by(id=product_id).first()
     if order:
         return jsonify({"error": "Transaction already exists"}), 400
 
     # Buat order
-    order = OrderModel(user_id=current_user_id, payment_method=payment_method, status='paid', checkout_id=checkout_id)
+    order = OrderModel(user_id=current_user_id, seller_id=seller_product.seller_id, payment_method=payment_method, status='paid', checkout_id=checkout_id)
     db.session.add(order)
     db.session.commit()
 
 
     return jsonify({
         "message": "Checkout successful",
-        "order": {"order_id": order.id, "payment_method": order.payment_method,"status": order.status}
+        "order": {"order_id": order.id, "payment_method": order.payment_method,"status": order.status, 
+                  "checkout_id": order.checkout_id, "seller_id": order.seller_id
+                }
     })
 
 def create_order_items(user_id, product_id, quantity, total_price, user_address, checkout_order_id):
@@ -94,23 +97,6 @@ def create_order_items(user_id, product_id, quantity, total_price, user_address,
         if product.stock < quantity:
             return {"error": f"Not enough stock available for product {product_id}"}, 400
 
-        # Check if the product is already in the user's order
-        # current_order_item = OrderItemModel.query.filter_by(product_id=product_id, user_address=user_address).first()
-
-        # if current_order_item:
-        #     # Update the existing order item
-        #     current_order_item.quantity = quantity
-        #     current_order_item.total_price = total_price
-        #     current_order_item.user_address = user_address
-        #     current_order_item.checkout_order_id = checkout_order_id
-        #     db.session.commit()
-
-        #     return {
-        #         "message": "Order item updated successfully",
-        #         "data": current_order_item.to_dict()
-        #     }, 200
-
-        # Create a new order item
         new_order_item = OrderItemModel(
             product_id=product_id,
             quantity=quantity,
