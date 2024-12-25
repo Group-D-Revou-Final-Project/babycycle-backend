@@ -74,6 +74,7 @@ def get_products_by_seller(user_id):
         ProductModel.name.label("name"),
         ReviewModel.rating.label("rating"),
         ProductModel.price.label("price"),
+        ProductModel.id.label("id"),
         DiscountModel.discount_percentage.label("discount_percentage"),
         ProductModel.stock.label("stock"),
         ProductModel.seller_id.label("seller_id")
@@ -89,7 +90,8 @@ def get_products_by_seller(user_id):
 
     # Format the results as a list of dictionaries
     formatted_results = [
-        {
+        {   
+            "id": result.id,
             "name": result.name,
             "rating": result.rating,
             "price": result.price,
