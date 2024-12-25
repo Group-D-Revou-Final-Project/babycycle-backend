@@ -20,7 +20,7 @@ discount_bp = Blueprint('discount', __name__)
 def discount_route_get_by_id(product_id):
     return get_discount_by_id(product_id)
 
-@discount_bp.route('/', methods=['POST'])
+@discount_bp.route('', methods=['POST'])
 @swag_from(CREATE_DISCOUNT)
 @jwt_required()
 def create_discount_route():
@@ -32,8 +32,3 @@ def create_discount_route():
     is_active = data.get('is_active')
 
     return create_discount(product_id, discount_percentage, start_date, end_date, is_active)
-
-# @discount_bp.route('/calculated-price/<int:product_id>', methods=['GET'])
-# @swag_from(GET_CALCULATED_DISCOUNT)
-# def discount_route_calculate_discount(product_id):
-#     return get_calculated_discount(product_id)

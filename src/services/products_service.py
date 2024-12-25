@@ -1,7 +1,7 @@
 from flask import jsonify
 from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
-# from src.models.discounts_model import DiscountModel
+from src.models.discounts_model import DiscountModel
 from src.models.sellers_model import SellerModel
 
 from src.config.settings import db
@@ -224,32 +224,69 @@ def get_product_by_warranty(is_warranty, limit, offset):
 
 
 def get_product_with_count(limit, offset, category, is_warranty):
-    # Validate limit and offset
-    if limit < 0 or offset < 0:
-        return jsonify({"error": "Limit and offset must be non-negative"}), 400
+    try:
+        base_query = db.session.query(
+            ProductModel.id,
+            ProductModel.name,
+            ProductModel.price,
+            ProductModel.category,
+            ProductModel.is_warranty,
+            ProductModel.image_url,
+            ProductModel.stock,
+            ProductModel.seller_id,
+            DiscountModel.discount_percentage,
+            DiscountModel.id.label("discount_id"),
+            DiscountModel.start_date,
+            DiscountModel.end_date,
+            DiscountModel.is_active
+        ).outerjoin(
+            DiscountModel, DiscountModel.product_id == ProductModel.id
+        ).filter(
+            ProductModel.is_deleted == False,
+            ProductModel.is_deactivated == False
+        )
 
-    # Base query filters
-    filters = {
-        "is_deleted": False,
-        "is_deactivated": False,
-        "category": category if category != "others" else None,
-        "is_warranty": is_warranty
-    }
-    # Remove None filters
-    filters = {key: value for key, value in filters.items() if value is not None}
+        # Apply category filter
+        if category and category != "discount":
+            base_query = base_query.filter(ProductModel.category == category)
+        elif category == "discount":
+            base_query = base_query.filter(DiscountModel.is_active == True)
 
-    # Query with limit and offset
-    products_query = ProductModel.query.filter_by(**filters).order_by(ProductModel.stock.desc())
-    total_count = products_query.count()
+        # Apply is_warranty filter
+        if is_warranty is not None:
+            base_query = base_query.filter(ProductModel.is_warranty == is_warranty)
 
-    # Apply limit and offset if applicable
-    if limit > 0:
-        products = products_query.limit(limit).offset(offset).all()
-    else:
-        products = products_query.all()
+        # Sort by stock and apply pagination
+        base_query = base_query.order_by(ProductModel.stock.desc())
+        total_count = base_query.count()
 
-    # Return results
-    return jsonify({
-        "total_count": total_count,
-        "data": [product.to_dict() for product in products]
-    }), 200
+        if limit > 0:
+            products = base_query.limit(limit).offset(offset).all()
+        else:
+            products = base_query.all()
+
+        # Format response
+        return jsonify({
+            "total_count": total_count,
+            "data": [
+                {
+                    "id": product.id,
+                    "name": product.name,
+                    "price": float(product.price),
+                    "category": product.category,
+                    "is_warranty": product.is_warranty,
+                    "image_url": product.image_url,
+                    "stock": product.stock,
+                    "seller_id": product.seller_id,
+                    "discount_percentage": float(product.discount_percentage) if product.discount_percentage else None,
+                    "discount_id": product.discount_id,
+                    "start_date": product.start_date.isoformat() if product.start_date else None,
+                    "end_date": product.end_date.isoformat() if product.end_date else None,
+                    "is_active": product.is_active
+                }
+                for product in products
+            ]
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -65,7 +65,7 @@ def create_product_route():
         # Extract fields
         name = data.get('name')
         price = data.get('price')
-        descriptions = data.get('description', '')  # Optional field, defaults to an empty string
+        descriptions = data.get('descriptions', '')  # Optional field, defaults to an empty string
         category = data.get('category')
         stock = data.get('stock', 0)
         is_warranty = data.get('is_warranty', False)  # Optional field, defaults to False
@@ -173,7 +173,12 @@ def get_products_with_count_route():
     limit = request.args.get('limit', default=0, type=int)
     offset = request.args.get('offset', default=0, type=int)
     category = request.args.get('category', type=str)
-    is_warranty = request.args.get('is_warranty', default="false").lower() in ["true", "1", "yes"]
-
+    
+    # Only parse is_warranty if it's provided in the request arguments
+    is_warranty = request.args.get('is_warranty')
+    if is_warranty is not None:
+        is_warranty = is_warranty.lower() in ["true", "1", "yes"]
+    
     return get_product_with_count(limit=limit, offset=offset, category=category, is_warranty=is_warranty)
+
 
