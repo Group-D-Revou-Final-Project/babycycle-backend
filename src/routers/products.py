@@ -178,7 +178,11 @@ def get_products_with_count_route():
     is_warranty = request.args.get('is_warranty')
     if is_warranty is not None:
         is_warranty = is_warranty.lower() in ["true", "1", "yes"]
+
+    sort_by = request.args.get('sort_by', type=str)
+    if sort_by is not None:
+        sort_by = sort_by.lower()
     
-    return get_product_with_count(limit=limit, offset=offset, category=category, is_warranty=is_warranty)
+    return get_product_with_count(limit=limit, offset=offset, category=category, is_warranty=is_warranty, sort_by=sort_by)
 
 

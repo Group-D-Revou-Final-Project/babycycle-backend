@@ -223,7 +223,7 @@ def get_product_by_warranty(is_warranty, limit, offset):
     
 
 
-def get_product_with_count(limit, offset, category, is_warranty):
+def get_product_with_count(limit, offset, category, is_warranty, sort_by):
     try:
         base_query = db.session.query(
             ProductModel.id,
@@ -246,6 +246,13 @@ def get_product_with_count(limit, offset, category, is_warranty):
             ProductModel.is_deactivated == False
         )
 
+        if sort_by == "newest":
+            base_query = base_query.order_by(ProductModel.created_at.desc())
+        elif sort_by ==  "highest_price":
+            base_query = base_query.order_by(ProductModel.price.desc())
+        elif sort_by == "lowest_price":
+            base_query = base_query.order_by(ProductModel.price.asc())
+            
         # Apply category filter
         if category and category != "discount":
             base_query = base_query.filter(ProductModel.category == category)
@@ -264,6 +271,7 @@ def get_product_with_count(limit, offset, category, is_warranty):
             products = base_query.limit(limit).offset(offset).all()
         else:
             products = base_query.all()
+
 
         # Format response
         return jsonify({
