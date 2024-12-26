@@ -1,8 +1,5 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-# from src.models.orders_model import OrderModel
-# from src.models.products_model import ProductModel
-
 
 class OrderItemModel(db.Model):
     __tablename__ = 'order_items'
@@ -14,7 +11,7 @@ class OrderItemModel(db.Model):
         db.ForeignKey('orders.checkout_id', ondelete="CASCADE"),
         nullable=False
     )
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id', ondelete="CASCADE"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     user_address = db.Column(db.Text, nullable=False)

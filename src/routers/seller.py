@@ -8,7 +8,9 @@ from src.services.seller_service import (
     create_seller,
     update_seller,
     delete_seller,
-    get_products_by_seller
+    get_products_by_seller,
+    get_products_by_seller_v2,
+    get_products_by_seller_v3
 )
 
 from src.swagger.sellers_swagger import (
@@ -70,3 +72,19 @@ def delete_seller_route(seller_id):
 def get_products_by_seller_route():
     user_id = get_jwt_identity()
     return get_products_by_seller(user_id)
+
+@sellers_bp.route('/sellers/products/v2', methods=['GET'])
+@swag_from(GET_PRODUCTS_BY_SELLER)
+@jwt_required()
+def get_products_by_seller_route_v2():
+    user_id = get_jwt_identity()
+    return get_products_by_seller_v2(user_id)
+
+
+@sellers_bp.route('/sellers/products/v3', methods=['GET'])
+@swag_from(GET_PRODUCTS_BY_SELLER)
+@jwt_required()
+def get_products_by_seller_route_v3():
+    user_id = get_jwt_identity()
+    return get_products_by_seller_v3(user_id)
+

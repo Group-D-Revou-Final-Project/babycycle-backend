@@ -85,6 +85,8 @@ def get_products_by_seller(user_id):
     ).filter(
         ProductModel.seller_id == seller_id
     ).all()
+
+    total_count = results.count()
     if not results:
         return jsonify({"error": "No products found for the specified seller"}), 404
 
@@ -103,3 +105,123 @@ def get_products_by_seller(user_id):
     ]
 
     return jsonify(formatted_results), 200
+
+def get_products_by_seller_v2(user_id):
+    try:
+        # Check if the seller exists
+        seller = SellerModel.query.filter_by(user_id=user_id).first()
+        if seller is None:
+            return jsonify({"error": "Seller not found"}), 404
+
+        seller_id = seller.id
+
+        # Query to get product details, reviews, and discounts
+        query = db.session.query(
+            ProductModel.id.label("id"),
+            ProductModel.name.label("name"),
+            ReviewModel.rating.label("rating"),
+            ProductModel.price.label("price"),
+            DiscountModel.discount_percentage.label("discount_percentage"),
+            ProductModel.stock.label("stock"),
+            ProductModel.seller_id.label("seller_id")
+        ).outerjoin(
+            ReviewModel, ReviewModel.product_id == ProductModel.id
+        ).outerjoin(
+            DiscountModel, DiscountModel.product_id == ProductModel.id
+        ).filter(
+            ProductModel.seller_id == seller_id
+        )
+
+        # Get total count
+        total_count = query.count()
+
+        # Fetch results
+        results = query.all()
+
+        # Return 404 if no products are found
+        if not results:
+            return jsonify({"error": "No products found for the specified seller"}), 404
+
+        # Format the results
+        formatted_results = {
+            "total_count": total_count,
+            "data": [
+                {
+                    "id": result.id,
+                    "name": result.name,
+                    "rating": result.rating or None,  # Handle null ratings
+                    "price": float(result.price),
+                    "discount_percentage": float(result.discount_percentage) if result.discount_percentage else 0.0,
+                    "stock": result.stock,
+                    "seller_id": result.seller_id,
+                }
+                for result in results
+            ]
+        }
+
+        return jsonify(formatted_results), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def get_products_by_seller_v3(user_id):
+    try:
+        # Check if the seller exists
+        seller = SellerModel.query.filter_by(user_id=user_id).first()
+        if seller is None:
+            return jsonify({"error": "Seller not found"}), 404
+
+        seller_id = seller.id
+
+        results = db.session.query(
+            ProductModel.id,
+            ProductModel.name,
+            ProductModel.price,
+            ProductModel.seller_id,
+            ProductModel.image_url,
+            ProductModel.is_warranty,
+            ProductModel.stock,
+            ProductModel.created_at,
+            DiscountModel.discount_percentage,
+            DiscountModel.start_date,
+            DiscountModel.end_date,
+            DiscountModel.is_active,
+            ReviewModel.rating,
+            ReviewModel.review
+        ).outerjoin(
+            DiscountModel, DiscountModel.product_id == ProductModel.id
+        ).outerjoin(
+            ReviewModel, ReviewModel.product_id == ProductModel.id
+        ).filter(
+            ProductModel.is_deactivated == False,
+            ProductModel.is_deleted == False,
+            ProductModel.seller_id == seller_id
+        ).all()
+
+        if not results:
+            return jsonify({"error": "No products found for the specified seller"}), 404
+
+        # Format the results as a list of dictionaries
+        formatted_results = [
+            {
+                "id": result.id,
+                "name": result.name,
+                "price": float(result.price),
+                "seller_id": result.seller_id,
+                "image_url": result.image_url,
+                "is_warranty": result.is_warranty,
+                "stock": result.stock,
+                "created_at": result.created_at.isoformat(),
+                "discount_percentage": float(result.discount_percentage) if result.discount_percentage else 0.0,
+                "start_date": result.start_date.isoformat() if result.start_date else None,
+                "end_date": result.end_date.isoformat() if result.end_date else None,
+                "is_active": result.is_active,
+                "rating": result.rating,
+                "review": result.review
+            }
+            for result in results
+        ]
+
+        return jsonify(formatted_results), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
