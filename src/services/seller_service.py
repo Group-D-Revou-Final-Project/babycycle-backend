@@ -225,3 +225,36 @@ def get_products_by_seller_v3(user_id):
         return jsonify(formatted_results), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+def get_seller_by_product_id(product_id):
+    try:
+        result = db.session.query(
+            SellerModel.id,
+            SellerModel.user_id,
+            SellerModel.name,
+            SellerModel.address,
+            SellerModel.contact,
+            SellerModel.created_at,
+            SellerModel.updated_at
+        ).outerjoin(
+            ProductModel, ProductModel.seller_id == SellerModel.id
+        ).filter(
+            ProductModel.id == product_id
+        ).first()
+
+        if not result:
+            return jsonify({"error": "Seller not found for the specified product"}), 404
+
+        # Format the result as a dictionary
+        seller_data = {
+            "seller_id": result.id,
+            "user_id": result.user_id,
+            "name": result.name,
+            "address": result.address,
+            "contact": result.contact,
+            "created_at": result.created_at.isoformat(),
+            "updated_at": result.updated_at.isoformat() if result.updated_at else None
+        }
+
+        return jsonify(seller_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

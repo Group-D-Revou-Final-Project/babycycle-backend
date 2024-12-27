@@ -2,6 +2,7 @@ from flask import jsonify
 from src.models.orders_model import OrderModel
 from src.models.order_items_model import OrderItemModel
 from src.models.products_model import ProductModel
+from src.models.sellers_model import SellerModel
 from src.config.settings import db
 
 def get_all_transactions(user_id):
@@ -18,11 +19,68 @@ def get_all_transactions(user_id):
         OrderItemModel.total_price,
         OrderItemModel.user_address,
         OrderItemModel.quantity,
-        ProductModel.name
+        ProductModel.name,
+        ProductModel.image_url
     ).join(
         OrderItemModel, OrderModel.checkout_id == OrderItemModel.checkout_order_id
     ).join(
         ProductModel, OrderItemModel.product_id == ProductModel.id
+    ).filter(
+        OrderModel.user_id == user_id
+    ).all()
+
+    if not results:
+        return jsonify({"error": "No transactions found for the specified user"}), 404
+    
+
+    # Format the results as a list of dictionaries
+    formatted_results = [
+        {
+            "user_id": result.user_id,
+            "seller_id": result.seller_id,
+            "status": result.status,
+            "payment_method": result.payment_method,
+            "checkout_id": result.checkout_id,
+            "is_reviewed": result.is_reviewed,
+            "created_at": result.created_at.isoformat(),  # Format created_at as ISO 8601 string
+            "product_id": result.product_id,
+            "total_price": result.total_price,
+            "user_address": result.user_address,
+            "quantity": result.quantity,
+            "name": result.name,
+            "image_url": result.image_url
+        }
+        for result in results
+    ]
+
+    return jsonify(formatted_results), 200
+
+
+def get_all_transactions_v2(user_id):
+    # Perform the query using SQLAlchemy ORM
+    results = db.session.query(
+        OrderModel.user_id,
+        OrderModel.seller_id,
+        OrderModel.status,
+        OrderModel.payment_method,
+        OrderModel.checkout_id,
+        OrderModel.is_reviewed,
+        OrderModel.created_at,
+        OrderItemModel.product_id,
+        OrderItemModel.total_price,
+        OrderItemModel.user_address,
+        OrderItemModel.quantity,
+        ProductModel.name,
+        ProductModel.image_url,
+        SellerModel.name.label("seller_name"),
+        SellerModel.address.label("seller_address"),
+        SellerModel.contact.label("seller_contact")
+    ).join(
+        OrderItemModel, OrderModel.checkout_id == OrderItemModel.checkout_order_id
+    ).join(
+        ProductModel, OrderItemModel.product_id == ProductModel.id
+    ).join(
+        SellerModel, ProductModel.seller_id == SellerModel.id
     ).filter(
         OrderModel.user_id == user_id
     ).all()
@@ -44,14 +102,18 @@ def get_all_transactions(user_id):
             "total_price": result.total_price,
             "user_address": result.user_address,
             "quantity": result.quantity,
-            "name": result.name
+            "name": result.name,
+            "image_url": result.image_url,
+            "seller_details": {
+                "name": result.seller_name,
+                "address": result.seller_address,
+                "seller_contact": result.seller_contact
+            }
         }
         for result in results
     ]
 
     return jsonify(formatted_results), 200
-
-
 
 def get_transaction_by_id(user_id, checkout_id):
     results = db.session.query(

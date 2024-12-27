@@ -10,7 +10,8 @@ from src.services.seller_service import (
     delete_seller,
     get_products_by_seller,
     get_products_by_seller_v2,
-    get_products_by_seller_v3
+    get_products_by_seller_v3,
+    get_seller_by_product_id
 )
 
 from src.swagger.sellers_swagger import (
@@ -87,4 +88,11 @@ def get_products_by_seller_route_v2():
 def get_products_by_seller_route_v3():
     user_id = get_jwt_identity()
     return get_products_by_seller_v3(user_id)
+
+@sellers_bp.route('/sellers/products/v3/<int:product_id>', methods=['GET'])
+@swag_from(GET_PRODUCTS_BY_SELLER)
+@jwt_required()
+def get_seller_by_product_id_route():
+    product_id = request.args.get('product_id')
+    return get_seller_by_product_id(product_id)
 

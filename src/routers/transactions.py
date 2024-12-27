@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 
 from src.services.transactions_service import (
-    get_all_transactions,
+    # get_all_transactions,
     get_transaction_by_id,
-    delete_transaction
+    delete_transaction,
+    get_all_transactions_v2
 )
 
 from src.swagger.transactions_swagger import (
@@ -22,7 +23,7 @@ transactions_bp = Blueprint('transactions', __name__)
 @swag_from(GET_ALL_TRANSACTIONS)
 def get_all_transactions_route():
     userID = get_jwt_identity()
-    return get_all_transactions(user_id=userID)
+    return get_all_transactions_v2(user_id=userID)
 
 
 @transactions_bp.route('/transactions/<string:checkout_id>', methods=['GET'])
