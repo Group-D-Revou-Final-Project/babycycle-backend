@@ -10,12 +10,14 @@ class OrderModel(db.Model):
     seller_id = db.Column(db.Integer, db.ForeignKey('sellers.id', ondelete="CASCADE"), nullable=True)
     status = db.Column(db.String(50), default='pending')
     payment_method = db.Column(db.String(50), nullable=False)
+    is_reviewed = db.Column(db.Boolean, nullable=False, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     user = db.relationship('UserModel', back_populates='orders')
     seller = db.relationship('SellerModel', back_populates='order') 
     order_items = db.relationship('OrderItemModel', back_populates='order')
+    reviews = db.relationship('ReviewModel', back_populates='order')
 
     def __repr__(self):
         return f'<Order {self.id}>'

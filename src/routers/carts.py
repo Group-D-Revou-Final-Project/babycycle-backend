@@ -52,7 +52,6 @@ def cart_route_post():
             product_id = item.get('product_id')
             user_id = userID
             quantity = item.get('quantity')
-            user_address = item.get('user_address') or None
             name = item.get('name')
             total_price = item.get('total_price')
 
@@ -67,7 +66,6 @@ def cart_route_post():
                 product_id=product_id,
                 quantity=quantity,
                 total_price=total_price,
-                user_address=user_address,
                 name=name
             )
 
@@ -97,12 +95,14 @@ def cart_route_get_cart_by_id(cart_id):
 
 @carts_bp.route('/carts/<int:cart_id>', methods=['PUT'])
 @swag_from(UPDATE_CARTS)
+@jwt_required()
 def cart_route_update(cart_id):
     data = request.get_json()
+    userID = get_jwt_identity()
     quantity = data.get('quantity')
     total_price = data.get('total_price')
 
-    return update_cart(cart_id=cart_id, quantity=quantity, total_price=total_price)
+    return update_cart(cart_id=cart_id, quantity=quantity, total_price=total_price, user_id=userID)
 @carts_bp.route('/carts/<int:cart_id>', methods=['DELETE'])
 @swag_from(DELETE_CARTS)
 @jwt_required()

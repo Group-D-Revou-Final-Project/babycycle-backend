@@ -1,13 +1,14 @@
-from flask_jwt_extended import create_access_token, get_jwt_identity
+# from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import jsonify
 from src.models.review_model import ReviewModel
 from src.models.users_model import UserModel
 from src.models.products_model import ProductModel
+from src.models.orders_model import OrderModel
 from src.config.settings import db
 
 
 
-def add_review(user_id, product_id, rating, review):
+def add_review(user_id, product_id, rating, review, checkout_order_id):
     try:
         # Check if the user is verified
         user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
@@ -19,9 +20,19 @@ def add_review(user_id, product_id, rating, review):
         if not product:
             return jsonify({"error": "Product not found or not available"}), 404
 
+        already_reviewed = ReviewModel.query.filter_by(user_id=user_id, checkout_order_id=checkout_order_id).first()
+        if already_reviewed:
+            return jsonify({"error": "You have already reviewed this product"}), 400
+        
         # Create a new review
-        new_review = ReviewModel(user_id=user_id, product_id=product_id, rating=rating, review=review)
+        new_review = ReviewModel(user_id=user_id, product_id=product_id, rating=rating, review=review, checkout_order_id=checkout_order_id)
         db.session.add(new_review)
+
+        transaction = OrderModel.query.filter_by(checkout_id=checkout_order_id).first()
+        if transaction:
+            transaction.is_reviewed = True
+            db.session.commit()
+
         db.session.commit()
 
         return jsonify({"message": "Review added successfully", "data": new_review.to_dict()}), 201

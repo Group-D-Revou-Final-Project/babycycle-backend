@@ -12,6 +12,7 @@ def get_all_transactions(user_id):
         OrderModel.status,
         OrderModel.payment_method,
         OrderModel.checkout_id,
+        OrderModel.is_reviewed,
         OrderModel.created_at,
         OrderItemModel.product_id,
         OrderItemModel.total_price,
@@ -32,17 +33,18 @@ def get_all_transactions(user_id):
     # Format the results as a list of dictionaries
     formatted_results = [
         {
-            "user_id": result[0],
-            "seller_id": result[1],
-            "status": result[2],
-            "payment_method": result[3],
-            "checkout_id": result[4],
-            "created_at": result[5].isoformat(),  # Format created_at as ISO 8601 string
-            "product_id": result[6],
-            "total_price": result[7],
-            "user_address": result[8],
-            "quantity": result[9],
-            "name": result[10]
+            "user_id": result.user_id,
+            "seller_id": result.seller_id,
+            "status": result.status,
+            "payment_method": result.payment_method,
+            "checkout_id": result.checkout_id,
+            "is_reviewed": result.is_reviewed,
+            "created_at": result.created_at.isoformat(),  # Format created_at as ISO 8601 string
+            "product_id": result.product_id,
+            "total_price": result.total_price,
+            "user_address": result.user_address,
+            "quantity": result.quantity,
+            "name": result.name
         }
         for result in results
     ]

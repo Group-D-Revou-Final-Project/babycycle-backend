@@ -41,8 +41,9 @@ def review_route_add():
     product_id = data.get('product_id')
     rating = data.get('rating')
     review = data.get('review')
+    checkout_order_id = data.get('checkout_order_id')
 
-    return add_review(user_id=user_id, product_id=product_id, rating=rating, review=review)
+    return add_review(user_id=user_id, product_id=product_id, rating=rating, review=review, checkout_order_id=checkout_order_id)
 
 @review_bp.route('/reviews/<int:review_id>', methods=['PUT'])
 @swag_from(EDIT_REVIEW)

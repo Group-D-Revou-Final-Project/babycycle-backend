@@ -39,6 +39,6 @@ class CartModel(db.Model):
             "quantity": self.quantity,
             # "price": self.price,
             "total_price": self.total_price,
-            "user_address": self.user_address,
+            # "user_address": self.user_address,
             "name": self.name
         }

@@ -8,11 +8,13 @@ class ReviewModel(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id', ondelete="CASCADE"), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     review = db.Column(db.Text, nullable=False)
+    checkout_order_id = db.Column(db.String(255), db.ForeignKey('orders.checkout_id', ondelete="CASCADE"), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     user = db.relationship('UserModel', back_populates='reviews')
     product = db.relationship('ProductModel', back_populates='reviews')
+    order = db.relationship('OrderModel', back_populates='reviews')
 
     def __repr__(self):
         return f'<ReviewModel id={self.id} user_id={self.user_id} product_id={self.product_id} rating={self.rating} review={self.review} created_at={self.created_at} updated_at={self.updated_at}>'
@@ -24,4 +26,7 @@ class ReviewModel(db.Model):
             'product_id': self.product_id,
             'rating': self.rating,
             'review': self.review,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+            'checkout_order_id': self.checkout_order_id
         }

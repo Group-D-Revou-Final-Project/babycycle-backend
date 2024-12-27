@@ -80,7 +80,7 @@ def get_cart_by_id(cart_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-def create_cart(user_id, product_id, quantity, total_price, user_address, name):
+def create_cart(user_id, product_id, quantity, total_price, name):
     try:
         # Check if the user is verified
         user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
@@ -103,7 +103,6 @@ def create_cart(user_id, product_id, quantity, total_price, user_address, name):
             # Update the existing cart item
             current_cart.quantity = quantity
             current_cart.total_price = total_price
-            current_cart.user_address = user_address
             current_cart.name = name
             db.session.commit()
             return jsonify({"message": "Cart item updated successfully", "data": current_cart.to_dict()}), 200
@@ -114,7 +113,6 @@ def create_cart(user_id, product_id, quantity, total_price, user_address, name):
             product_id=product_id,
             quantity=quantity,
             total_price=total_price,
-            user_address=user_address,
             name=name
         )
 
@@ -127,9 +125,13 @@ def create_cart(user_id, product_id, quantity, total_price, user_address, name):
         db.session.rollback()
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-def update_cart(cart_id, quantity, total_price):
+def update_cart(cart_id, quantity, total_price, user_id):
+    # Check if the user is verified
+    user = UserModel.query.filter_by(id=user_id, is_verified=True).first()
+    if not user:
+        return jsonify({"error": "User not found or not verified"}), 404
     try:
-        cart = CartModel.query.filter_by(id=cart_id).first()
+        cart = CartModel.query.filter_by(user_id=user_id, id=cart_id).first()
         if cart:
             cart.quantity = quantity
             cart.total_price = total_price
