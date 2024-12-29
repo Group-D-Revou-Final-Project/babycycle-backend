@@ -8,7 +8,8 @@ class UserModel(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.Enum('USER', 'ADMIN', name='role_type_enum'), default='USER', nullable=False)
-    address = db.Column(db.Text, nullable=True)
+    # address = db.Column(db.Text, nullable=True)
+    profile_image = db.Column(db.String(255), nullable=True)
     phone = db.Column(db.String(20), nullable=True)
     is_seller = db.Column(db.Boolean, nullable=False, default=False)
     is_verified = db.Column(db.Boolean, nullable=False, default=False)
@@ -34,7 +35,7 @@ class UserModel(db.Model):
             "username": self.username,
             "email": self.email,
             "role": self.role,
-            "address": self.address,
+            "profile_image": self.profile_image,
             "phone": self.phone,
             "is_seller": self.is_seller,
             "is_verified": self.is_verified,
