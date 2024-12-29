@@ -241,7 +241,6 @@ def get_user_by_id(user_id):
             "details": str(e)
         }), 500
 
-
 def get_all_users():
     try:
         # Fetch all users from the database
@@ -261,3 +260,51 @@ def get_all_users():
             "error": "An error occurred while fetching users.",
             "details": str(e)
         }), 500
+
+def update_user_image(user_id, profile_image):
+    try:
+        user = UserModel.query.get(user_id)
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+
+        user.profile_image = profile_image
+        db.session.commit()
+
+        return jsonify({ "data": [user.to_dict()]}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def update_user_profile(user_id, username, email, phone):
+    try:
+        # Fetch the user to be updated
+        user = UserModel.query.get(user_id)
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+
+        # Debugging: Print user information
+        # print(f"Updating user: {user.to_dict()}")
+
+        # Check if the username is unique, excluding the current user
+        existing_username_user = UserModel.query.filter(UserModel.username == username, UserModel.id != user_id).first()
+        if existing_username_user:
+            # print(f"Conflict with username: {existing_username_user.to_dict()}")
+            return jsonify({"error": "Username already exists"}), 400
+
+        # Check if the email is unique, excluding the current user
+        existing_email_user = UserModel.query.filter(UserModel.email == email, UserModel.id != user_id).first()
+        if existing_email_user:
+            # print(f"Conflict with email: {existing_email_user.to_dict()}")
+            return jsonify({"error": "Email already exists"}), 400
+
+        # Update the user fields
+        user.username = username
+        user.email = email
+        user.phone = phone
+        db.session.commit()
+
+        return jsonify({"data": user.to_dict()}), 200
+    except Exception as e:
+        # Rollback the session in case of an error
+        db.session.rollback()
+        # print(f"Exception occurred: {str(e)}")
+        return jsonify({"error": str(e)}), 500
