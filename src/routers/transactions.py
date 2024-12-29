@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 
@@ -6,7 +6,8 @@ from src.services.transactions_service import (
     # get_all_transactions,
     get_transaction_by_id,
     delete_transaction,
-    get_all_transactions_v2
+    get_all_transactions_v2,
+    get_transaction_by_id_v2
 )
 
 from src.swagger.transactions_swagger import (
@@ -26,12 +27,13 @@ def get_all_transactions_route():
     return get_all_transactions_v2(user_id=userID)
 
 
-@transactions_bp.route('/transactions/<string:checkout_id>', methods=['GET'])
+@transactions_bp.route('/transactions/<int:product_id>', methods=['GET'])
 @swag_from(GET_TRANSACTION_BY_ID)
 @jwt_required()
-def get_transaction_by_id_route(checkout_id):
+def get_transaction_by_id_route(product_id):
     userID = get_jwt_identity()
-    return get_transaction_by_id(user_id=userID, checkout_id=checkout_id)
+    checkout_id = request.args.get('checkout_id')
+    return get_transaction_by_id_v2(user_id=userID, checkout_id=checkout_id, product_id=product_id)
 
 @transactions_bp.route('/transactions/<string:checkout_id>', methods=['DELETE'])
 @swag_from(DELETE_TRANSACTION)

@@ -1,9 +1,5 @@
 from datetime import datetime, timezone
 from src.config.settings import db
-# from src.models.verifications_model import VerificationModel
-# from src.models.sellers_model import SellerModel
-# from src.models.carts_model import CartModel 
-# from src.models.orders_model import OrderModel
 
 class UserModel(db.Model):
     __tablename__ = 'users'
@@ -27,6 +23,7 @@ class UserModel(db.Model):
     orders = db.relationship('OrderModel', back_populates='user')
 
     reviews = db.relationship('ReviewModel', back_populates='user', cascade="all, delete-orphan")
+    addresses = db.relationship('AddressModel', back_populates='user', cascade="all, delete-orphan")
     
     def __repr__(self):
         return f'<User {self.email}>'

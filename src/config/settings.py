@@ -94,6 +94,7 @@ def create_app(settings_conf=None):
     from src.routers.transactions import transactions_bp
     from src.routers.seller import sellers_bp
     from src.routers.search import search_bp
+    from src.routers.address import address_bp
 
 
     app.register_blueprint(register_blueprint, url_prefix=api_url + '/users')
@@ -106,6 +107,7 @@ def create_app(settings_conf=None):
     app.register_blueprint(transactions_bp, url_prefix=api_url)
     app.register_blueprint(sellers_bp, url_prefix=api_url)
     app.register_blueprint(search_bp, url_prefix=api_url)
+    app.register_blueprint(address_bp, url_prefix=api_url)
 
     
 

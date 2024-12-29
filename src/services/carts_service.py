@@ -36,7 +36,8 @@ def get_all_carts(user_id):
                 CartModel.quantity,
                 CartModel.total_price,
                 CartModel.name,
-                ProductModel.price
+                ProductModel.price,
+                ProductModel.image_url
             )
             .join(ProductModel, ProductModel.id == CartModel.product_id, isouter=True)  # LEFT JOIN
             .filter(CartModel.user_id == user_id)  # WHERE condition
@@ -52,13 +53,14 @@ def get_all_carts(user_id):
         # Format the results as a list of dictionaries
         response_data = [
             {
-                "id": row[0],
-                "product_id": row[1],
-                "user_id": row[2],
-                "quantity": row[3],
-                "total_price": float(row[4]) if row[4] else None,  # Convert Decimal to float
-                "name": row[5],
-                "price": float(row[6]) if row[6] else None  # Convert Decimal to float
+                "id": row.id,
+                "product_id": row.product_id,
+                "user_id": row.user_id,
+                "quantity": row.quantity,
+                "total_price": float(row.total_price) if row.total_price else None,  # Convert Decimal to float
+                "name": row.name,
+                "price": float(row.price) if row.price else None,
+                "image_url": row.image_url  # Convert Decimal to float
             }
             for row in results
         ]
